@@ -1,0 +1,15 @@
+**/*.so
+**/*.o
+**/*~
+**/*.pyc
+**/*.pyo
+**/*.pyd
+**/*.backup
+**/#*#
+auto
+Documentation.aux
+Documentation.log
+Documentation.out
+Documentation.synctex.gz
+Documentation.toc
+
