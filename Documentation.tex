@@ -686,21 +686,27 @@ Neutrinos). It is based on the Calicoes software that was used for the
 Silicium Tungsten Electromagnetic Calorimeter (SiW-ECAL) prototype of
 the future International Linear Collider, developed by Frédéric
 Magniette and Miguel Rubio-Roy. Both Anpan and Calicoes are based on
-the Pyrame framework of which, it can be said, they two similar
-implementations.
+the Pyrame framework of which they two similar implementations.
 
 Until Summer 2018, we were using the Calicoes software without almost
 any modification as the data acquisition software for the WAGASCI
 prototype (i.e. Proton Module + WAGASCI water-in detector + Ingrid
-module). But for the beginning of the Physics run in April 2019 I
-decided quite one-sidedly to change the name of the acquisition
-software and release it under the GPLv3 license. It is not clear which
-license is Calicoes released according to. Anyway Pyrame (which is
-written by the same developers) is released under GPLv3 so I assumed
-that Calicoes is released under the same license. This entitles me
-(Pintaudi Giorgio) to release again a modified version of the software
-under different name but giving due credit to the original authors
-(Frédéric Magniette and Miguel Rubio-Roy).
+module).
+
+Between the end of the WAGASCI prototype commissioning run in Summer
+2018 and the beginning of the WAGASCI Experiment Physics run in April
+2019, I started my Ph.D. at YNU and I decided to further develop and
+improve the WAGASCI DAQ system. So I took the decision (quite
+one-sidedly I have to admit) to change the name of the acquisition
+software and release it under the GPLv3 license.
+
+It is not clear which license is Calicoes released according
+to. Anyway Pyrame (which is written by the same developers) is
+released under GPLv3 so I assumed that Calicoes is released under the
+same license. This entitles me (Pintaudi Giorgio) to release again a
+modified version of the software under different name but giving due
+credit to the original authors (Frédéric Magniette and Miguel
+Rubio-Roy).
 
 I have chosen that name because wagashi (after which the WAGASCI
 experiment is named) in Japanese means ``traditional sweets'' and
@@ -718,8 +724,8 @@ the \href{http://llr.in2p3.fr/sites/pyrame/documentation/}{Pyrame
   documentation website}. Anyways those websites are mainly aimed at
 developers who are well-versed in scientific programming and are not
 afraid of reading through much of the source code. Instead, this guide
-is meant to be a user manual for the physicist who just wants to
-use the software (and maybe only write some simple scripts).
+is meant to be a user manual for the physicist who just wants to use
+the software (and maybe only write some simple scripts).
 
 One must always keep in mind that most of the times scientific
 software is not written by a big team of programmers with a steady job
@@ -731,38 +737,43 @@ usually the first thing that get cut or reduced is documentation
 as long as the original developers are also the users of the software,
 has no tangible consequences. But as new physicists start to use the
 software an evil-loop onsets where software is used just as-is and
-works-just-because-it-works. Luckily the Calicoes and Pyrame software is
-adequately documented and with this guide I would like to close the
+works-just-because-it-works. Luckily the Calicoes and Pyrame software
+is adequately documented and with this guide I would like to close the
 gap between users and software even further.
 
 \section{Pyrame}
-I won't go into a detailed description of the Pyrame framework since
-it is already covered in the
+I won't go into detail describing the Pyrame framework since much of
+what I have to say is already covered in the
 \href{http://llr.in2p3.fr/sites/pyrame/documentation/}{Pyrame
-  documentation website}. First, what the user need to understand is
-that Pyrame is a distributed software. This means that each part or
-function of Pyrame can be run concurrently on a different
-machine. Each of those parts are called ``modules'' and each module
-communicates with the others through the exchange of TCP/IP
-packets. If you don't know what the TCP/IP protocol is you can consult
-the Wikipedia pages:
+  documentation website}. So before continuing to the following I
+would suggest the reader to take a quick look there and get a rough
+idea of what is happening inside of Pyrame. This section is merely
+intended as an appendix and a review of the content shown there. The
+only real difference with the online documentation is that, instead of
+trying to explain how the software works, I will take the point of
+view of the user and I will only focus on how to use Pyrame to get
+some work done.
+
+First, what the user need to understand is that Pyrame is a
+distributed software. This means that each part or function of Pyrame
+can be located on a different machine. Each of those parts are called
+``modules'' and each module communicates with the others through the
+exchange of TCP/IP packets. If you don't know what the TCP/IP protocol
+is you can consult the Wikipedia pages:
 \href{https://en.wikipedia.org/wiki/Transmission_Control_Protocol}{TCP}
 and \href{https://en.wikipedia.org/wiki/IPv4}{IP}, that should be
-enough. Before continuing to the following I would suggest the reader
-to take a quick look at the
-\href{http://llr.in2p3.fr/sites/pyrame/documentation/}{Pyrame
-  documentation website} and get a rough idea of what is happening
-inside of Pyrame.
+enough.
 
 Basically each machine able to get an IP address can open a network
 port through which a certain application (or in the case of Pyrame a
-certain module) can communicate with the outside. For modules residing
-on the same machine the \cleanstyle{localhost=127.0.0.1} IP address is
-used. The purpose of the localhost IP address is simply to send an
-outgoing packet back in. So for example if we want to reach the
-Configuration Module (CMOD) that is running on the port
-\cleanstyle{CMOD\_PORT=9002} on the local machine we need the only to
-know the couple \cleanstyle{localhost:CMOD\_PORT} or explicitly
+certain module) can communicate and interact with the modules
+``outside''. For modules residing on the same machine the
+\cleanstyle{localhost=127.0.0.1} IP address must be used. The purpose
+of the localhost IP address is simply to send an outgoing packet back
+in. So for example if we want to reach the Configuration Module (CMOD)
+that is running on the port \cleanstyle{CMOD\_PORT=9002} on the local
+machine we need the only to use the couple
+\cleanstyle{localhost:CMOD\_PORT} or explicitly
 \cleanstyle{127.0.0.1:9002}. Or if we want to communicate with the
 Variables Module (VARMOD) that is running on the port
 \cleanstyle{VARMOD\_PORT=9001} on another machine in the same sub-net
@@ -771,7 +782,7 @@ with IP \cleanstyle{192.168.10.100} we would address it as
 default ports is located in \cleanstyle{/opt/pyrame/ports.txt}
 
 There are 7 fundamental modules that must be always running during
-acquisition for Pyrame to function correctly:
+data acquisition for Pyrame to function correctly:
 \begin{itemize}
 \item The Variables module: \cleanstyle{VARMOD\_PORT=9001}
 \item The Configuration module: \cleanstyle{CMOD\_PORT=9002}
@@ -781,35 +792,41 @@ acquisition for Pyrame to function correctly:
 \item The Storage Module: \cleanstyle{STORAGE\_PORT=9020}
 \end{itemize}
 There may be other modules running depending on the specific
-configuration. Starting from Section~\ref{sec:CMOD} I will give a
-short description of each of those modules, but before that I would
-like to talk about the ``State Machine''.
+configuration. The needed modules are usually started automatically
+when a configuration file is loaded so the user doesn't need to worry
+about that. To learn more about the configuration file go to section
+TO-DO.
+
+Starting from Section~\ref{sec:CMOD} I will give a short description
+of each of these modules, but before that I would like to talk about
+the ``State Machine''.
 
 \subsection{State Machine}
 In Pyrame, the detector is always thought to be in one of four
 states. They are:
-\begin{itemize}
-\item UNDEFINED: The detector state has not been probed yet. This is
-  the state of the detector before Pyrame has started or after it has
-  ended.
+\begin{enumerate}
+\item\label{undefined} UNDEFINED: The detector state has not been
+  probed yet. This is the state of the detector before Pyrame has
+  started or after it has ended.
 \item READY: The detector itself is in the same UNDEFINED state as
   before but the software has been initialized and the detector
   configuration has been loaded into memory.
 \item CONFIGURED or RECONFIGURED: The configuration has been applied
-  to the detector. This means that the chips firmware has been
-  configured, the power supplies turned on, the voltage set up and so
-  on. The detector is ready to take data.
-\item ACQUIRING The detector is acquiring data.
-\end{itemize}
-The principle of Pyrame is to offer users a state machine to pilot the
-whole detector, managing all the synchronization and the sequencing
-issues.  All the transitions of the state machine are associated to a
-script that can be called from a terminal:
+  to the detector. This means that the firmware of the various boards
+  has been configured, the power supplies turned on, the voltage set
+  up and so on. The detector is ready to take data.
+\item\label{acquiring} ACQUIRING The detector is acquiring data.
+\end{enumerate}
+The principle at the base of the Pyrame workflow is that the user must
+go through all the steps from~\ref{undefined} to~\ref{acquiring} in
+order to take data. The software will take charge of managing all the
+synchronization issues.  All the transitions between machine state can
+be accomplished with the aid of shell scripts called from a terminal:
 \cleanstyle{load\_config\_file.sh}, \cleanstyle{initialize.sh},
 \cleanstyle{configure.sh}, etc\dots. It is also possible to use the
 CouchDB web-GUI to manage the transitions.
 \begin{figure}
-  \includegraphics[width=\linewidth]{/opt/anpan/doc/_images/state_machine.doc.png}
+  \includegraphics[width=\linewidth]{state_machine.doc.png}
   \caption{Pyrame State Machine}
   \label{fig:state-machine}
 \end{figure}
@@ -847,10 +864,81 @@ variables. For more information refer to the Pyrame documentation.
 
 \subsection{The Acquisition-Chain Module}
 \label{sec:ACQ}
-I am sorry but I don't have much to say in addition to what is already
-written in the Pyrame documentation. It might worth taking a look at
-the \cleanstyle{cmd\_acqpc.py} file where I added many explanatory comments to the
-code.
+In my opinion, understanding completely the Pyrame Acquisition-Chain
+is the most daunting task, if one really wants to know how the Pyrame
+software works internally. Since I am far from an expert in that
+field, I will only gather here what I have understood so far.
+
+From the perspective of the user, reading the
+\href{file:///opt/pyrame/doc/cmd_acq.html}{Pyrame documentation}, the
+comments in the configuration file and the comments in the
+\cleanstyle{cmd\_acqpc.py} file should be enough to get things going
+in almost every real-world scenario.
+
+For the developers and more experienced users let's start by taking a
+look at the graph~\ref{fig:acq-server}:
+\begin{figure}
+  \includegraphics[width=\linewidth]{acq_server.doc.png}
+  \caption{Pyrame State Machine}
+  \label{fig:acq-server}
+\end{figure}
+I will only focus on the WAGASCI case. All the configuration regarding
+the acquisition chain is done under the \cleanstyle{pcacq\_X} field in
+the configuration file. If you take a pre-existing configuration file
+written by myself you will find many descriptive comments in that
+section that hopefully will guide you through a painless
+configuration.
+
+\subsubsection{Media acquisition}
+The ``media acquisition'' phase is controlled by the acquisition
+plugins. What these plugins do is to ``open'' an acquisition media and
+get the data from there. The acquisition media can basically be of two
+types: the Ethernet port (with TCP or UDP protocols) or a raw file
+that was previously acquired (for testing or debugging purposes). For
+a more in-depth description of every plugin refer to
+\href{file:///opt/pyrame/doc/cmd_acq.html}{this page} and its
+sub-pages. After the data has been acquired, it is not ready to be
+analyzed yet because it contains the IP/TCP caps and it is in binary
+form.
+
+You can take a look at the source code and related comments in the
+\cleanstyle{anpan/cmd\_acqpc/cmd\_acqpc.py} file and in particular in
+the \cleanstyle{init\_fin\_acqpc} function where every acquisition
+plugin is listed and explained.
+
+\subsubsection{Data uncap}
+In this face, the acquired data is uncapped. This means that, for
+example in the TCP case, the IP/TCP headers are stripped, the data
+integrity checked (lost or corrupted packages) and the data content
+filtered (data packets or control packets). Honestly I don't know much
+more than this about these plugins.
+
+\subsubsection{Data Converter/Dispatcher}
+Here the decoder library is called. For example in the case of
+SPIROC2D the library path is \cleanstyle{spiroc2d\_decoder.so}. This
+library takes the uncapped raw data coming from the acquisition source
+(for example the GDCC) and convert it into a stream of blocks of
+events. These blocks are then fed to the Online Monitor and Online
+Event Builder programs.  The decoder library needs to know the channel
+mapping (the geometry) of the detector to associate to every channel
+its position in space.
+
+However, maybe because of some bugs or lack of time, the SPIROC2D
+converter for the WAGASCI prototype commissioning run was disabled. In
+the \cleanstyle{cmd\_dif.py} file the line needed to start the
+conversion was commented out and function's result was always set to
+positive, thus completely disabling Online Monitor capabilities of
+Pyrame.
+
+I am going to enable it again and debug it (TO-DO)
+
+\subsubsection{Online Monitor}
+The WAGASCI online monitor code is contained in the
+\cleanstyle{anpan/guis/om\_wagasci} folder. It is a program external
+to Pyrame and WAGASCI that needs to be started by hand. It however
+interacts with Pyrame under the hood. It receives the Blocks and
+Events created by the ``Data Converter/Dispatcher'' face. More info
+about the More info can be found in section TO-DO.
 
 \subsection{The Run Control Module}
 \label{sec:RC}
@@ -883,11 +971,135 @@ In the case of a NFS share this is the format for the mp variable:
 \end{lstlisting}
 
 % To autostart services (modules) when Pyrame is started edit file
-% pyrame/launcher/services.txt
-% To add default module ports edit the file pyrame/ports.txt
+% pyrame/launcher/services.txt To add default module ports edit the
+% file pyrame/ports.txt
+
+\subsection{Run and interact with Pyrame}
+There are several ways to interact with Pyrame and its modules. When
+the AnpanInstaller script installs Pyrame, it makes sure that Pyrame
+is automatically started at every reboot. On system with
+\cleanstyle{systemctl}\footnote{Both Ubuntu 18.04 and CentOS 7 use
+  \cleanstyle{systemctl}} Pyrame is started as a system daemon and its
+execution is controller with the \cleanstyle{systemctl} or
+\cleanstyle{service} shell commands. To enable Pyrame at startup use
+\begin{lstlisting}
+      sudo systemctl enable pyrame
+\end{lstlisting}
+To disable it
+\begin{lstlisting}
+      sudo systemctl disable pyrame
+\end{lstlisting}
+To start a single time Pyrame
+\begin{lstlisting}
+      sudo systemctl start pyrame
+\end{lstlisting}
+To stop it
+\begin{lstlisting}
+      sudo systemctl stop pyrame
+\end{lstlisting}
+
+Moreover there are several ways to interact with Pyrame modules. If a
+module is already running the simplest way to interact with it is to
+open a terminal and use the command:
+\begin{lstlisting}
+      chkpyr2.py hostname port function parameters
+\end{lstlisting}
+where \cleanstyle{hostname} is the IP address of the module, for
+example \cleanstyle{localhost}, \cleanstyle{port} is the port number
+of the module, \cleanstyle{function} is the particular function that
+you want the module to perform and \cleanstyle{parameters} are the
+parameters to be passed to that function. All the public functions of
+the Pyrame and Anpan/Calicoes modules are listed on the online
+documentations.
+
+You can also interact with Pyrame modules from external python scripts
+... TO-DO
+
+\subsection{Pyrame Configuration}\label{sec:pyrame-configuration}
+TO-DO
+
+\subsection{Blocks and Events}\label{sec:blocks-events}
+In Pyrame the raw data is organized in events and blocks of events. As
+far as I understood, events are grouped into blocks that are sent
+between Pyrame modules.
+
+\subsubsection{Event}
+On a raw level, an event is just a single hit TO-CHECK. Each hit is
+roughly described by the time, space and charge released. Other
+parameters that may refer to an event are described below.
+
+An event is described by a struct like this:
+\begin{lstlisting}
+      struct event {
+        char **time;             // List of string containing hit times
+        int time_size;           // Number of hit times
+        char **space;            // List of string containing hit points
+        int space_size;          // Number of hit points
+        char **data;             // List of string containing various
+                                 // event properties.
+        int data_size;           // Number of elements in data
+        char used;               // ??
+        struct event *next;      // Pointer to the next event
+        struct block *block;     // Pointer to the block
+      };
+\end{lstlisting}
+Up to now the \cleanstyle{data} list contains the following elements:
+\begin{itemize}
+\item ``spill'': spill number.
+\item ``spill\_flag'': the spill flag is set when the event happens
+  inside of the beam spill time-frame. This means that the particle
+  detected is most probably the result of a neutrino interaction from
+  the neutrino beam inside or outside the detector.
+\item ``roc'': ROC chip number.
+\item ``rocchan'': ROC chip channel number.
+\item ``bcid'': BCID (Bunch Crossing IDentification). Despite the
+  misleading name, the BCID indicates just the number of rise time of
+  the slow since the \textit{startacq} signal. More on this on TO-DO.
+\item ``sca'': Switched Capacitor Array number.
+\item ``plane'': Plane number.
+\item ``channel'': Channel number.
+\item ``en'': Energy (charge). This field correspond to the ADC count.
+\item TDC time: ``time''
+\item ``hit'': The hit flag is set if the event contains a hit. The
+  hit may be due to a particle passage inside of the detector or
+  simply by dark or electric noise.
+\item ``gain'': The gain flag is set when we want to measure the
+  gain. In that case we compare the pedestal and first hit position to
+  calculate the gain.
+\end{itemize}
+
+\subsubsection{Block}
+A block is described by a struct like this:
+\begin{lstlisting}
+      struct block {
+        int id;                  // Block identifier
+        char finalized;          // ??
+        int nb_events;           // Number of events in the block
+        char **props;            // List of strings that can contain
+                                 // various block properties as the
+                                 // spill number, spill flag, etc...
+        int props_size;          // Number of props strings
+        char *bstr;              // ??
+        struct evtstruct *es;    // This struct is used to navigate
+                                 // through the various props strings
+        struct event *events;    // List of events
+        struct block *next;      // Pointer to the next block
+      };
+\end{lstlisting}
+Up to now the \cleanstyle{props} list contains the following elements:
+\begin{itemize}
+\item spill number: ``spill''
+\item spill flag: ``spill\_flag''
+\end{itemize}
+
+The ``spill\_flag'' is ``1'' during the spill time frame and ``0''
+otherwise. This flag is useful to discriminate between cosmic muons
+and particles coming from accelerated neutrino interactions.  For
+further info about the WAGASCI spill timings refer to section TO-DO.
+
 \section{Anpan}
 \begin{itemize}
-\item  WAGASCI\_PORT=12000
+\item WAGASCI\_PORT=12000
 \item ACQPC\_PORT=12001
 \item GDCC\_PORT=12003
 \item CCC\_PORT=12004
