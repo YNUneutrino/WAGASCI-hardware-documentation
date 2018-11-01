@@ -795,7 +795,7 @@ There may be other modules running depending on the specific
 configuration. The needed modules are usually started automatically
 when a configuration file is loaded so the user doesn't need to worry
 about that. To learn more about the configuration file go to section
-TO-DO.
+TO-DO.\@
 
 Starting from Section~\ref{sec:CMOD} I will give a short description
 of each of these modules, but before that I would like to talk about
@@ -805,13 +805,13 @@ the ``State Machine''.
 In Pyrame, the detector is always thought to be in one of four
 states. They are:
 \begin{enumerate}
-\item\label{undefined} UNDEFINED: The detector state has not been
+\item\label{undefined} UNDEFINED:\ The detector state has not been
   probed yet. This is the state of the detector before Pyrame has
   started or after it has ended.
-\item READY: The detector itself is in the same UNDEFINED state as
+\item READY:\ The detector itself is in the same UNDEFINED state as
   before but the software has been initialized and the detector
   configuration has been loaded into memory.
-\item CONFIGURED or RECONFIGURED: The configuration has been applied
+\item CONFIGURED or RECONFIGURED:\ The configuration has been applied
   to the detector. This means that the firmware of the various boards
   has been configured, the power supplies turned on, the voltage set
   up and so on. The detector is ready to take data.
@@ -827,12 +827,10 @@ be accomplished with the aid of shell scripts called from a terminal:
 CouchDB web-GUI to manage the transitions.
 \begin{figure}
   \includegraphics[width=\linewidth]{state_machine.doc.png}
-  \caption{Pyrame State Machine}
-  \label{fig:state-machine}
+  \caption{Pyrame State Machine}\label{fig:state-machine}
 \end{figure}
 
-\subsection{The Configuration Module}
-\label{sec:CMOD}
+\subsection{The Configuration Module}\label{sec:CMOD}
 
 The configuration module (called also CMOD) is in charge of many
 things. First, it is dedicated to configuration storage and export.
@@ -853,8 +851,7 @@ different states through the \cleanstyle{transition\_cmod}
 function. Again, usually this transition is managed by shell scripts
 or directly by the GUI so cmod is quite transparent to the user.
 
-\subsection{The Variables Module}
-\label{sec:VARMOD}
+\subsection{The Variables Module}\label{sec:VARMOD}
 
 The varmod is a centralized service that allows all the modules to
 share variables for collecting statistics or sharing global
@@ -862,8 +859,8 @@ information. You can store a value associated with a name (a variable)
 and then get it back. You can also make some basic operations on the
 variables. For more information refer to the Pyrame documentation.
 
-\subsection{The Acquisition-Chain Module}
-\label{sec:ACQ}
+\subsection{The Acquisition-Chain Module}\label{sec:ACQ}
+
 In my opinion, understanding completely the Pyrame Acquisition-Chain
 is the most daunting task, if one really wants to know how the Pyrame
 software works internally. Since I am far from an expert in that
@@ -879,8 +876,7 @@ For the developers and more experienced users let's start by taking a
 look at the graph~\ref{fig:acq-server}:
 \begin{figure}
   \includegraphics[width=\linewidth]{acq_server.doc.png}
-  \caption{Pyrame State Machine}
-  \label{fig:acq-server}
+  \caption{Pyrame State Machine}\label{fig:acq-server}
 \end{figure}
 I will only focus on the WAGASCI case. All the configuration regarding
 the acquisition chain is done under the \cleanstyle{pcacq\_X} field in
@@ -928,9 +924,11 @@ converter for the WAGASCI prototype commissioning run was disabled. In
 the \cleanstyle{cmd\_dif.py} file the line needed to start the
 conversion was commented out and function's result was always set to
 positive, thus completely disabling Online Monitor capabilities of
-Pyrame.
+Pyrame. I am going to enable it again and debug it (TO-DO)
 
-I am going to enable it again and debug it (TO-DO)
+Moreover, in the current Pyrame implementation only the Shared Memory
+and Raw file distribution buses are implemented (check the
+\cleanstyle{cmd_acq.c} file).
 
 \subsubsection{Online Monitor}
 The WAGASCI online monitor code is contained in the
@@ -938,24 +936,22 @@ The WAGASCI online monitor code is contained in the
 to Pyrame and WAGASCI that needs to be started by hand. It however
 interacts with Pyrame under the hood. It receives the Blocks and
 Events created by the ``Data Converter/Dispatcher'' face. More info
-about the More info can be found in section TO-DO.
+about the More info can be found in section TO-DO.\@
 
-\subsection{The Run Control Module}
-\label{sec:RC}
+\subsection{The Run Control Module}\label{sec:RC}
 
 TO-DO
 
-\subsection{The Storage Module}
-\label{sec:STORAGE}
+\subsection{The Storage Module}\label{sec:STORAGE}
 
 Storage is a Pyrame module that manages data created by other modules
-and its inclusion on the RunDB. For further info about the RunDB
+and its inclusion on the RunDB.\@ For further info about the RunDB
 module refer to the Pyrame documentation.
 
 Storage allows to use a mount point and a path to transparently store
 data elsewhere in the network. It also automates common tasks such as
 saving the calxml configuration and a log with optional varmod
-variables (e.g.: stats) at the same place as data files.
+variables (e.g.:\ stats) at the same place as data files.
 
 As far as I know there are only two kinds of storage that the Storage
 Module can handle. One is the standard file on a file system and
@@ -1013,9 +1009,10 @@ the Pyrame and Anpan/Calicoes modules are listed on the online
 documentations.
 
 You can also interact with Pyrame modules from external python scripts
-... TO-DO
+\dots TO-DO
 
 \subsection{Pyrame Configuration}\label{sec:pyrame-configuration}
+
 TO-DO
 
 \subsection{Blocks and Events}\label{sec:blocks-events}
@@ -1024,7 +1021,7 @@ far as I understood, events are grouped into blocks that are sent
 between Pyrame modules.
 
 \subsubsection{Event}
-On a raw level, an event is just a single hit TO-CHECK. Each hit is
+On a raw level, an event is just a single hit TO-CHECK.\@ Each hit is
 roughly described by the time, space and charge released. Other
 parameters that may refer to an event are described below.
 
@@ -1054,7 +1051,7 @@ Up to now the \cleanstyle{data} list contains the following elements:
 \item ``rocchan'': ROC chip channel number.
 \item ``bcid'': BCID (Bunch Crossing IDentification). Despite the
   misleading name, the BCID indicates just the number of rise time of
-  the slow since the \textit{startacq} signal. More on this on TO-DO.
+  the slow since the \textit{startacq} signal. More on this on TO-DO.\@
 \item ``sca'': Switched Capacitor Array number.
 \item ``plane'': Plane number.
 \item ``channel'': Channel number.
@@ -1095,7 +1092,7 @@ Up to now the \cleanstyle{props} list contains the following elements:
 The ``spill\_flag'' is ``1'' during the spill time frame and ``0''
 otherwise. This flag is useful to discriminate between cosmic muons
 and particles coming from accelerated neutrino interactions.  For
-further info about the WAGASCI spill timings refer to section TO-DO.
+further info about the WAGASCI spill timings refer to section TO-DO.\@
 
 \section{Anpan}
 \begin{itemize}
