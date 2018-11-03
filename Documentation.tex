@@ -1,28 +1,30 @@
 
 %-------------------------------LATEX SYNTAX----------------------------------
 %
-%       enter:                          \\, \linebreak, \newline
-%       new page:                       \newpage
-%       tab:                            \tab
-%       new section:            \section{name} text
-%       new paragraph           \subsection{name} text  (subsub...section{name} for more layers)
-%       refer:                          \nameref{label name}    (place "\label{name}" at the position you want to refer to)
-%       %, &, $, etc:           \%, \&, \$, etc         (these are latex operators, add a "\" to type it as text)
-%       add comment:            \commred{text}, \commblue{text}, \commpurp{text}, \commgreen{text}
-%       bullet points:          \begin{itemize} \item{text} ... \item{text} \end{itemize}
-%       clean code:                     \cleancode{text}
-%       idem without indent:\cleanstyle{text}
-%       bold, italic, under:\textbf{text}, textit{text}, \underline{text}
-%       table:                          \begin{tabular}{c c c} text \end{tabular}       ('&' for tab, '\\' for new line)
-%       
-%       use Google for the rest
+%       enter:               \\, \linebreak, \newline
+%       new page:            \newpage
+%       tab:                 \tab
+%       new section:         \section{name} text
+%       new paragraph        \subsection{name} text  (subsub...section{name} for more layers)
+%       %, &, $, _, etc:     (these are latex operators, add a "\" to type it as text)
+%       add comment:         \commred{text}, \commblue{text}, \commpurp{text}, \commgreen{text}
+%       clean code:          \cleancode{text}
+%       idem without indent: \cleanstyle{text}
+%       bold, italic, under: \textbf{text}, textit{text}, \underline{text}
+%       table:               \begin{tabular}{c c c} text \end{tabular}
+%                            ('&' for tab, '\\' for new 
 %       
 %------------------------------------------------------------------------------
+%chktex-file 1
+%chktex-file 13
+%chktex-file 29
+%chktex-file 44
 
 \documentclass[a4paper]{report}
 
 \usepackage[utf8]{inputenc}
-\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+%\usepackage[greek,english]{babel}
 \usepackage{amsmath}
 \usepackage{color}
 \usepackage{graphicx}
@@ -40,6 +42,9 @@
 \usepackage{enumitem}
 \usepackage{geometry}
 \usepackage{listings}
+\usepackage{textcomp}
+\usepackage[backend=biber]{biblatex}
+\addbibresource{../bibliography.bib}
 \geometry{
  a4paper,
  total={170mm,257mm},
@@ -99,11 +104,12 @@
     backgroundcolor=Plum!25,bordercolor=Plum,#1]{#2}}}
 
 
-%------------------------------------BEGIN DOC----------------------------------------
+%------------------------------------BEGIN DOC---------------------------------------
 
 \begin{document}
+%\selectlanguage{english}
 
-\title{WAGASCI SOFTWARE\\INSTALLATION and USER GUIDE}
+\title{WAGASCI DAQ SYSTEM\\USER GUIDE}
 \author{\\Author: Pintaudi Giorgio\\\\
   Physics Department, Yokohama National University\\
   240-8501 Yokohama-shi Hodogaya-ku Tokiwadai 79-5\\ % chktex-file 8
@@ -113,11 +119,862 @@
 \maketitle
 \newpage
 
-% -----------------------------------------TOC-----------------------------------------
+% -----------------------------------------TOC---------------------------------------
 \tableofcontents\label{c}
 \newpage
 
-% ------------------------------------------TEXT---------------------------------------
+% ------------------------------------------TEXT-------------------------------------
+
+\chapter{DAQ Hardware}
+In this chapter the DAQ electronics of the WAGASCI experiment is
+described in as much detail as possible. With this statement, I don't
+mean that I am going to write down again everything that there is to know about
+the WAGASCI electronics: if there is any source that contains some
+relevant piece of information, I am going to cite that reference and
+consider that content as covered.
+
+\section{Overview}\label{sec:overview}
+The WAGASCI DAQ system electronics is composed of many different
+boards (Figure~\ref{DAQ-schematics}). All of them were developed at LLR (Laboratoire
+Leprince-Ringuet) in France. Please refer to the following articles
+for an introduction to every board of the
+system\cite{Gastaldi:2014vaa,Gastaldi:2014oid}.  Be warned that these
+articles and all the ones that follow through the chapter, describe the
+general features of the DAQ system but don't explain how to actually
+use it. Moreover they are somewhat redundant, so if you choose to read
+them all, be prepared to read the same things over and over again. I
+cannot blame the authors too much for this kind of ``publication''
+spamming. If I were them, after so much effort to develop a new DAQ
+system (both hardware and software), I would like at least to get as
+many publications as possible out of it, too.
+
+On the other hand this very documentation is meant more as a ``User
+Guide'', so, while referring to the said literature for the more
+general and technical remarks, I will only focus on practical usage
+scenarios and examples.
+\begin{figure}[H]
+  \centering
+    \includegraphics[width=0.7\linewidth]{DAQ-schematics}
+    \caption{The schematics of the WAGASCI DAQ system. The very same
+      schematics can be referred to the SideMRD where instead of 20
+      boards there are only 3 and instead of arrayed MPPCs there are
+      Single MPPCs adapters}\label{DAQ-schematics}
+  \end{figure}
+
+\section{SPIROC2D}
+SPIROC is a dedicated very front-end chip developed originally for an
+ILC prototype hadronic Calorimeter with SiPM readout (CALICE
+experiment). It has been realized in 0.35$\mu$m SiGe technology. It
+has been developed to match the requirements of large dynamic range,
+low noise, low consumption, high precision and large number of readout
+channels needed. The SPIROC version used for the WAGASCI DAQ is
+SPIROC2D.
+
+The SPIROC ASIC that reads 36 SiPMs is an evolution of the FLC\_SiPM
+used in the CALICE experiment prototype. The first SPIROC prototype has been
+produced in June 2007 and packaged in a CQFP240 package. A second
+version, SPIROC2, was realized in June 2008 to accommodate a thinner
+TQFP208 package and fix a bug in the ADC.
+
+SPIROC is an \textbf{auto-triggered} (it is possible to set a
+threshold value below which no data is acquired), \textbf{bi-gain}
+(there are two pre-amplifiers one with low gain for bigger signals and
+another with higher gain for smaller signals), \textbf{36-channel}
+ASIC which allows to measure on each channel the charge from one
+photoelectron to 2000 and the time with a 100ps accurate TDC (be
+warned that accuracy and precision are two distinct concepts).\@ An
+analog memory array (Switched Capacitor Array) with a depth of 16 for
+each is used to store the time information and the charge
+measurement. Refer to Wikipedia for more info about the SCA (this
+should be more than enough if you are an experimental physicist like
+me).
+
+A 12-bit Wilkinson ADC has been embedded to digitize the analog memory
+contents (time and charge on 2 gains). The data are then stored in a 4
+kilobytes RAM.\@ A very complex digital part has been integrated to
+manage all theses features and to transfer the data to the DAQ.\@
+
+A small list of the most basic SPIROC properties:
+\begin{itemize}
+\item ASIC name: SPIROC (Silicon PM Integrated Read-Out Chip)
+\item Current available version: 2A,2B,2C,2D,2E
+\item Number of channel: 36
+\item Polarity of input signal: positive
+\item Detector read out: SIPM, MPPC, compliant with PM, MA-PM
+\item Max input signal: 2000 photoelectrons at minimum gain
+\end{itemize}
+
+\subsection{References}
+The documentation about the SPIROC family is quite vast (when compared with
+the GDCC, CCC and DIF boards) but randomly dispersed through the
+net. Here I am providing a compilation of all the available
+literature.
+
+\begin{itemize}
+\item General articles about pre-amplifiers and amplifiers used for
+  Physics
+  measurements~\cite{Hamamatsu:2001,Bertuccio:1996,Lioliou:2015,Ortec}
+  and of course everything about signal processing that you can find
+  in the Knoll book~\cite{Knoll:2010radiation}.
+\item Articles and slide shows about the SPIROC
+  characterization~\cite{Callier:2008,Callier:2009,Fabbri:2009,%
+    Callier:2013,Callier:2015}
+\item SPIROC manuals and
+  pin-out~\cite{SPIROC2Dpinlist,SPIROC2Ddatasheet,SPIROC:OMEGA}
+\end{itemize}
+
+\subsection{Short description}
+Please read this section only after having read at least some of the
+references above otherwise it probably won't make much sense.
+
+Each channel of SPIROC2 is made of:
+\begin{itemize}
+\item An 8-bit input DAC with a very low power of 1$\mu$W/channel as
+  it is not power pulsed. The DAC also has the particularity of being
+  powered with 5V whereas the rest of the chip is powered with
+  3.5V. Think of this DAQ as a way to fine tune the High Voltage
+  supplied to the MPPCs in a range from -4V to +4V. TO-CHECK the
+  range. This tuning directly reflects on the gain of that particular
+  channel. It is possible to control this value by tweaking the TO-DO
+\item A high gain and a low gain pre-amp in parallel on each input
+  allow handling the large dynamic range. A gain adjustment over 6
+  bits common for the 64 channels has been integrated in
+  SPIROC2. TO-CHECK it is not clear!
+\item The charge is measured on both gains by a ``slow'' shaper (an
+  amplifier with pulse duration of 50–150ns) followed by an analogue
+  memory (SCA) with a depth of 16 capacitors.
+\item The auto-trigger is taken on the high gain path with a high-gain
+  fast shaper followed by a low offset discriminator. In other words
+  the input signal is first processed by the high-gain pre-amp and
+  then compared with a given threshold (that can be adjusted). If the
+  signal is ``over'' the threshold the acquisition is triggered,
+  otherwise the signal is ignored. By low offset I mean that (due to a
+  hardware error) the threshold is not set on the main part of the
+  pulse but on the lower part of the pulse as one can see in
+  figure~\ref{threshold-bug}. This erroneous behavior has been fixed
+  in the SPIROC2E version but it has been shown that it doesn't affect
+  the measure so much as to require a replacement of all the chips.
+  \begin{figure}
+    \includegraphics[width=\linewidth]{threshold-bug.png}
+    \caption{The threshold should be applied on the upper part of the
+      signal and not on the lower. This figure shows two signals over
+      the respective thresholds. The blue lines show where the
+      threshold should be: in this case only signal ABOVE the
+      threshold value trigger acquisition. The red lines show where
+      the threshold actually is: in this case only signals BELOW the
+      threshold value trigger acquisition.}\label{threshold-bug}
+  \end{figure}
+  The discriminator output is used to generate the hold-and-track on
+  the 36 channels. The threshold is common to the 36 channels, given
+  by a 10 bit DAC with a subsequent 4 bit fine tuning per channel.
+\item The discriminator output is also used to store the value of a
+  300ns ramp in a dedicated analogue memory to provide time
+  information with an accuracy of 100 ps.
+\item A 12 bit Wilkinson ADC is used to digitize the data at the end
+  of the acquisition period.
+\end{itemize}
+The digital part is complex as it must handle the SCA write and read
+pointers, the ADC conversion, the data storage in a RAM and the
+readout process.
+
+The chip has been extensively tested by many groups. The first series
+of tests has been mostly devoted to characterizing the analog
+performance, which meets the design specifications.
+
+\subsection{ASU}
+The Active Sensor Unit (ASU) board is just the name a PCB board
+containing the SPIROC2D chip. It is basically an adapter to connect
+the chip to the MPPCs and to the rest of the DAQ system. The ASUs can
+be daisy-chained together until a maximum of 40 units (4 rows of 5 ASUs)  for every
+DIF as can be seen in Figure~\ref{daisy-chain}.
+\begin{figure}[H]
+  \centering
+    \includegraphics[width=0.7\linewidth]{daisy-chain}
+    \caption{Schematic of ASU daisy chain}\label{daisy-chain}
+  \end{figure}
+In Figure TO-DO it is shown a regular ASU board that IS NOT the last
+one of a row.
+TO-ADD-FIGURE
+The jumpers of the last ASU of every row must be set as shown if
+Figure TO-DO to be able to revert the signal back to the interfaces.
+TO-ADD-FIGURE
+  
+\section{Interface}
+This board has no important function by itself. It is just a sort of
+adapter to connect all the ASUs to the DIF, to route the High Voltage
+to the MPPCs (through the SPIROC2C chip) and to route the Low Voltage
+to the SPIROC2D chip itself and to the DIF. Despite being the most
+trivial board of the system it is the component that gave more problems
+in the past.
+
+The connectors are quite fragile and I counted at least 5 boards
+broken when disconnecting some cables (including one by myself). In
+particular take extra care when connecting-disconnecting the DIF and
+the Low Voltage.
+
+Moreover, as can be read in Tamura Riku's thesis (after correcting typos):
+
+\textit{[\dots] in order to check the correct operation of
+  the full setup, the daisy chain configuration is firstly tested. The
+  test is done by increasing the number of daisy-chained ASU boards
+  one by one. Up to about 10 boards, the daisy chain is correctly
+  configured but at around 10 boards the configuration starts to
+  fail. After several tests with different configurations, it appeared
+  that this is due to the attenuation and reflection of the bunch
+  crossing clock (BCID) when it travels through the chain: the
+  signals, including the bunch crossing clock, are serially
+  transported through the daisy chain so the length that they need to
+  travel depends on the number of connected ASU boards. The total
+  capacitance of the daisy chain depends on the number of connected
+  ASU boards, too. This creates a mismatch of impedance between the
+  endpoints and some DAQ signals are badly affected. In practice most
+  of the DAQ signals are not so affected but it seems that the bunch
+  crossing clock is strongly affected. The whole DAQ acquisition phase
+  is synchronized to the bunch crossing clock so this is a very
+  critical issue.}
+
+\textit{Fortunately, this problem can be fixed by ``patching'' the
+  bunch crossing clock line. To prevent the attenuation of bunch
+  crossing clock and match the impedance a 4ch buffer,
+  CDCLVC1104\cite{Texas-Instruments:CDCLVC11xx}, is applied to the
+  bunch crossing clock line as shown in Figure TO-DO. This buffer is a
+  highly performing and fast responding one. The delay it adds to the
+  BCID is of 0.8-2ns, which is less than 1\% of the period of bunch
+  crossing clock, so the effect on the timing measurement due to the
+  BCID is negligible. This patch is tested to work fine and the daisy
+  chain is configured correctly even with the full setup (20
+  ASUs). [\dots]}
+
+Long story short, we have to patch every interface with that chip if
+we want to daisy-chain more than 10 ASUs. Just to be on the safe side,
+all the interface boards, even if connected to less than 10 ASUs, were
+fixed with the following procedure.
+
+\subsection{How to fix the interface}
+Here I will show how to concretely fix the interface. I came to know
+about this procedure by reading two pdf files that were sent to YNU
+from I don't know where. I must admit that until now they hold the
+record for being the most unintelligible piece of paper that I have
+ever read. No matter how much I strove, I think that I could never write in
+such a cumbersome manner even if I want to. Anyway \dots
+\begin{enumerate}
+\item First solder the CDCLVC1104 chip on the base and glue it on the
+  board (any empty space on the interface is good). You can use a
+  different support (the white piece of plastic in the pictures) and
+  base (the small PCB with 10 holes on each side) if you want.
+  \begin{figure}[H]
+    \centering \includegraphics[width=.3\textwidth]{support}\hfill
+    \includegraphics[width=.3\textwidth]{base}\hfill
+    \includegraphics[width=.3\textwidth]{base-glued}
+    \caption{PCB Base (in the middle) glued to the interface board
+      using a plastic support (on the left). The buffer chip must be
+      soldered on that base (not shown in the pictures, yet). You can
+      solder the buffer chip in any position on the base as long as it
+      is soldered properly.}\label{buffer}
+  \end{figure}
+\item Then take a 50 pins flat cable (that you are then going to
+  connect to the J2 connector). Cut in the middle the wires number 13,
+  49 and 50 (SR\_CK\_BUF, TRIG\_EXT\_N and TRIG\_EXT\_P
+  respectively). Refer to Figure~\ref{J2} for the flat cable
+  pin-out. Strip the ``ASU end'' of these wires. By ASU end I mean the
+  end that is not to be connected to the interface but to the ASU. If
+  needed do the same for the other flat cables coming out the
+  connectors J6, J8 and J10.
+  \begin{figure}[H]
+    \centering \includegraphics[width=0.7\linewidth]{J2}
+    \caption{J2 connector pin-out}\label{J2}
+  \end{figure}
+\item Desolder the M9 chip
+  \begin{figure}[H]
+    \centering \includegraphics[width=0.5\linewidth]{desolder}
+    \caption{CDCLVC1104 chip pin-out}\label{desolder}
+  \end{figure}
+\item Referring to Figures~\ref{interface-connections}
+  and~\ref{buffer-blueprint}, connect with some wires the pins in this
+  way:
+  \begin{table}[H]
+    \centering \bgroup
+    \def\arraystretch{1.5}% 1 is the default, change whatever you need
+    \begin{tabular}{|c|c|c|}
+      \hline
+      \textbf{color} & \textbf{CDCLVC1104 pin} & \textbf{Interface pin} \\
+      \hline
+      brown & 1 CLKIN & SR\_clk \\
+      \hline
+      red & 6 VDD & (refer to picture) \\
+      \hline
+      black & 4 ground & Interface ground \\
+      \hline
+    \end{tabular}
+    \egroup
+    \caption{Fast command packet format}
+  \end{table} 
+  \begin{figure}[H]
+    \centering \includegraphics[width=0.7\linewidth]{buffer-blueprint}
+    \caption{CDCLVC1104 chip pin-out}\label{buffer-blueprint}
+  \end{figure}
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=.3\textwidth]{interface-pinout1}\hfill
+    \includegraphics[width=.3\textwidth]{interface-pinout2}\hfill
+    \includegraphics[width=.3\textwidth]{ground}
+    \caption{Interface connections}\label{interface-connections}
+  \end{figure}
+  I am sorry but in the document that I was given there is no
+  schematics regarding the holes around the M9 chip, so we had to
+  solder referring only to the attached pictures.
+\item (Optional but recommended) Solder a capacitor of 100nf to
+  decouple power and ground between the pins 6 VDD and 4 GRD of the
+  buffer. It is not shown in the pictures.
+\item Now connect the interface holes around the M9 chip as shown in
+  Figures~\ref{interface-connections} (blue cable). In the document I
+  was given those are called pin number 1 and 7. Anyway, as I said,
+  without the schematics those numbers are meaningless. Sometimes I
+  wonder if Physicists are really so smart as they think to be.
+\item Pins 3,5,7,8 of the buffer chip represent the output of the
+  buffer. Connect each pin to the wire number 13 of the flat cables
+  coming off J2, J6, J8 and J10. The order is not relevant. Of course,
+  in the case of the SideMRD, only one connection is needed (for
+  example J2).
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\linewidth]{connection_flat_cable}%
+    \label{connection_flat_cable}
+  \end{figure}
+\item Connect wire number 50 of the flat cable (it is white in our
+  case) to any ground pin on the interface board. You have to connect
+  the ``ASU end'' of the wire to ground in a similar way as shown in
+  Figure~\ref{connection_flat_cable} for the case of cable 13.
+\item Connect wire number 49 of the flat cable (it is blue in our
+  case) to the DVD pin on the interface board. The DVD pin is located
+  near the M9 chip that you just desoldered. You have to connect the
+  ``ASU end'' of the wire to the DVD pin in a similar way as shown in
+  Figure~\ref{connection_flat_cable} for the case of cable 13.
+\item The final result should look more or less like this:
+  \begin{figure}[H]
+    \centering \includegraphics[width=0.9\linewidth]{fixed-interface}
+    \caption{Final result. Notice that the ground wire coming from
+      wire 50 of the flat cable is ambiguously red and not black as it
+      should be. The green wire is coming off from wire number 49 and
+      is connected to the DVD pin on the Interface. In total there are
+      three yellow output wires coming off the buffer chip: of them
+      only one is actually used.}\label{fixed-interface}
+  \end{figure}
+\end{enumerate}
+  
+\section{DIF}
+\section{GDCC}
+I have not much to add in addition to what is already in literature
+quoted in Section~\ref{sec:overview}. This is the board that I know
+the least about, just because, fortunately, it just works and has
+never given any problem so far.
+
+Please refer to the literature~\cite{GDCC:2012} or
+Appendix~\ref{sec:gdcc-cheat-sheet} if you want/need to know more
+about the GDCC.
+
+The GDCC is built on standard Ethernet. Communication to and from it
+is done via RAW Ethernet packets. This is why it doesn't need an IP
+address. This way communication between the DAQ PC and the GDCC can be
+faster than if they traveled through the IP layer but, this way, the
+GDCC must necessarily be located on the same physical LAN network as
+the DAQ PC.
+
+\section{CCC}
+\section{ZED board}
+\section{Low and High Voltage PS}
+\section{Temperature Monitors}
+\section{Water Level monitor}
+
+\chapter{DAQ software}
+The main software for data acquisition of the WAGASCI experiment is
+called Anpan (Acquisition Networked Program for Accelerated
+Neutrinos). It is based on the Calicoes software that was used for the
+Silicium Tungsten Electromagnetic Calorimeter (SiW-ECAL) prototype of
+the future International Linear Collider, developed by Frédéric
+Magniette and Miguel Rubio-Roy. Both Anpan and Calicoes are based on
+the Pyrame framework of which they two similar implementations.
+
+Until Summer 2018, we were using the Calicoes software without almost
+any modification as the data acquisition software for the WAGASCI
+prototype (i.e. Proton Module + WAGASCI water-in detector + Ingrid
+module).
+
+Between the end of the WAGASCI prototype commissioning run in Summer
+2018 and the beginning of the WAGASCI Experiment Physics run in April
+2019, I started my Ph.D. at YNU and I decided to further develop and
+improve the WAGASCI DAQ system. So I took the decision (quite
+one-sidedly I have to admit) to change the name of the acquisition
+software and release it under the GPLv3 license.
+
+It is not clear which license is Calicoes released according
+to. Anyway Pyrame (which is written by the same developers) is
+released under GPLv3 so I assumed that Calicoes is released under the
+same license. This entitles me (Pintaudi Giorgio) to release again a
+modified version of the software under different name but giving due
+credit to the original authors (Frédéric Magniette and Miguel
+Rubio-Roy).
+
+I have chosen that name because wagashi (after which the WAGASCI
+experiment is named) in Japanese means ``traditional sweets'' and
+anpan (a soft bun filled with red soy beans paste) is a kind of
+Japanese sweet snack (even if not properly an strictly traditional
+sweet). Anyway, I love anpan and I eat one of them almost everyday so
+we can say that the development of this software was fueled mainly by
+anpan. From that the name choice.
+
+This chapter of the documentation isn't a thorough guide of all the
+code that makes up anpan because much of that is already explained in
+the \href{http://llr.in2p3.fr/sites/pyrame/documentation/}{Pyrame
+  documentation website} and
+\href{http://llr.in2p3.fr/sites/pyrame/calicoes/documentation/}{Calicoes
+  documentation website}. Anyways those websites are mainly aimed at
+developers who are well-versed in scientific programming and are not
+afraid of reading through much of the source code. Instead, this guide
+is meant to be a user manual for the physicist who just wants to use
+the software (and maybe only write some simple scripts).
+
+One must always keep in mind that most of the times scientific
+software is not written by a big team of programmers with a steady job
+and a steady income, but by a few researchers or worse grad students
+with little (or no) income whatsoever, unsteady future prospects and a
+very limited budget. Because of the lack of money and man-power,
+usually the first thing that get cut or reduced is documentation
+(because it is not strictly necessary for the software to run). This,
+as long as the original developers are also the users of the software,
+has no tangible consequences. But as new physicists start to use the
+software an evil-loop onsets where software is used just as-is and
+works-just-because-it-works. Luckily the Calicoes and Pyrame software
+is adequately documented and with this guide I would like to close the
+gap between users and software even further.
+
+\section{Pyrame}
+I won't go into detail describing the Pyrame framework since much of
+what I have to say is already covered in the
+\href{http://llr.in2p3.fr/sites/pyrame/documentation/}{Pyrame
+  documentation website} or~\cite{Rubio-Roy:2015}. So before
+continuing to the following I would suggest the reader to take a quick
+look there and get a rough idea of what is happening inside of
+Pyrame. This section is merely intended as an appendix and a review of
+the content shown there. The only real difference with the online
+documentation is that, instead of trying to explain how the software
+works, I will take the point of view of the user and I will only focus
+on how to use Pyrame to get some work done.
+
+First, what the user need to understand is that Pyrame is a
+distributed software. This means that each part or function of Pyrame
+can be located on a different machine. Each of those parts are called
+``modules'' and each module communicates with the others through the
+exchange of TCP/IP packets. If you don't know what the TCP/IP protocol
+is you can consult the Wikipedia pages:
+\href{https://en.wikipedia.org/wiki/Transmission_Control_Protocol}{TCP}
+and \href{https://en.wikipedia.org/wiki/IPv4}{IP}, that should be
+enough.
+
+Basically each machine able to get an IP address can open a network
+port through which a certain application (or in the case of Pyrame a
+certain module) can communicate and interact with the modules
+``outside''. For modules residing on the same machine the
+\cleanstyle{localhost=127.0.0.1} IP address must be used. The purpose
+of the localhost IP address is simply to send an outgoing packet back
+in. So for example if we want to reach the Configuration Module (CMOD)
+that is running on the port \cleanstyle{CMOD\_PORT=9002} on the local
+machine we need the only to use the couple
+\cleanstyle{localhost:CMOD\_PORT} or explicitly
+\cleanstyle{127.0.0.1:9002}. Or if we want to communicate with the
+Variables Module (VARMOD) that is running on the port
+\cleanstyle{VARMOD\_PORT=9001} on another machine in the same sub-net
+with IP \cleanstyle{192.168.10.100} we would address it as
+\cleanstyle{192.168.10.100:9001} and so on.  The list of all the
+default ports is located in \cleanstyle{/opt/pyrame/ports.txt}
+
+There are 7 fundamental modules that must be always running during
+data acquisition for Pyrame to function correctly:
+\begin{itemize}
+\item The Variables module: \cleanstyle{VARMOD\_PORT=9001}
+\item The Configuration module: \cleanstyle{CMOD\_PORT=9002}
+\item The Mount Datadir Module: \cleanstyle{MOUNTD\_PORT=9005}
+\item The Acquisition-Chain Module: \cleanstyle{ACQ\_PORT=9010}
+\item The Run Control Module: \cleanstyle{RC\_PORT=9014}
+\item The Storage Module: \cleanstyle{STORAGE\_PORT=9020}
+\end{itemize}
+There may be other modules running depending on the specific
+configuration. The needed modules are usually started automatically
+when a configuration file is loaded so the user doesn't need to worry
+about that. To learn more about the configuration file go to section
+TO-DO.\@
+
+Starting from Section~\ref{sec:CMOD} I will give a short description
+of each of these modules, but before that I would like to talk about
+the ``State Machine''.
+
+\subsection{State Machine}
+In Pyrame, the detector is always thought to be in one of four
+states. They are:
+\begin{enumerate}
+\item\label{undefined} UNDEFINED:\ The detector state has not been
+  probed yet. This is the state of the detector before Pyrame has
+  started or after it has ended.
+\item READY:\ The detector itself is in the same UNDEFINED state as
+  before but the software has been initialized and the detector
+  configuration has been loaded into memory.
+\item CONFIGURED or RECONFIGURED:\ The configuration has been applied
+  to the detector. This means that the firmware of the various boards
+  has been configured, the power supplies turned on, the voltage set
+  up and so on. The detector is ready to take data.
+\item\label{acquiring} ACQUIRING The detector is acquiring data.
+\end{enumerate}
+The principle at the base of the Pyrame workflow is that the user must
+go through all the steps from~\ref{undefined} to~\ref{acquiring} in
+order to take data. The software will take charge of managing all the
+synchronization issues.  All the transitions between machine state can
+be accomplished with the aid of shell scripts called from a terminal:
+\cleanstyle{load\_config\_file.sh}, \cleanstyle{initialize.sh},
+\cleanstyle{configure.sh}, etc\dots. It is also possible to use the
+CouchDB web-GUI to manage the transitions.
+\begin{figure}
+  \includegraphics[width=\linewidth]{state_machine.doc.png}
+  \caption{Pyrame State Machine}\label{fig:state-machine}
+\end{figure}
+
+\subsection{The Configuration Module}\label{sec:CMOD}
+
+The configuration module (called also CMOD) is in charge of many
+things. First, it is dedicated to configuration storage and export.
+Every Pyrame module can register in the cmod and store its
+configuration parameters. The configuration parameters and the modules
+themselves are organized as a tree-like structure representing the
+actual structure of the detector.  TO-DO how modules can edit the
+configuration?
+
+Usually the user just load a configuration file in the cmod using the
+shell script \cleanstyle{load\_config\_file.sh filename.xml}. The cmod
+contains at any time a copy of the configuration of all the modules
+and it can generate xml files containing all the parameters to be used
+with calxml.
+
+Another role that cmod plays is to manage the transitions between
+different states through the \cleanstyle{transition\_cmod}
+function. Again, usually this transition is managed by shell scripts
+or directly by the GUI so cmod is quite transparent to the user.
+
+\subsection{The Variables Module}\label{sec:VARMOD}
+
+The varmod is a centralized service that allows all the modules to
+share variables for collecting statistics or sharing global
+information. You can store a value associated with a name (a variable)
+and then get it back. You can also make some basic operations on the
+variables. For more information refer to the Pyrame documentation.
+
+\subsection{The Acquisition-Chain Module}\label{sec:ACQ}
+
+In my opinion, understanding completely the Pyrame Acquisition-Chain
+is the most daunting task, if one really wants to know how the Pyrame
+software works internally. Since I am far from an expert in that
+field, I will only gather here what I have understood so far.
+
+From the perspective of the user, reading the
+\href{file:///opt/pyrame/doc/cmd_acq.html}{Pyrame documentation}, the
+comments in the configuration file and the comments in the
+\cleanstyle{cmd\_acqpc.py} file should be enough to get things going
+in almost every real-world scenario.
+
+For the developers and more experienced users let's start by taking a
+look at the graph~\ref{fig:acq-server}:
+\begin{figure}
+  \includegraphics[width=\linewidth]{acq_server.doc.png}
+  \caption{Pyrame State Machine}\label{fig:acq-server}
+\end{figure}
+I will only focus on the WAGASCI case. All the configuration regarding
+the acquisition chain is done under the \cleanstyle{pcacq\_X} field in
+the configuration file. If you take a pre-existing configuration file
+written by myself you will find many descriptive comments in that
+section that hopefully will guide you through a painless
+configuration.
+
+\subsubsection{Media acquisition}
+The ``media acquisition'' phase is controlled by the acquisition
+plugins. What these plugins do is to ``open'' an acquisition media and
+get the data from there. The acquisition media can basically be of two
+types: the Ethernet port (with TCP or UDP protocols) or a raw file
+that was previously acquired (for testing or debugging purposes). For
+a more in-depth description of every plugin refer to
+\href{file:///opt/pyrame/doc/cmd_acq.html}{this page} and its
+sub-pages. After the data has been acquired, it is not ready to be
+analyzed yet because it contains the IP/TCP caps and it is in binary
+form.
+
+You can take a look at the source code and related comments in the
+\cleanstyle{anpan/cmd\_acqpc/cmd\_acqpc.py} file and in particular in
+the \cleanstyle{init\_fin\_acqpc} function where every acquisition
+plugin is listed and explained.
+
+\subsubsection{Data uncap}
+In this face, the acquired data is uncapped. This means that, for
+example in the TCP case, the IP/TCP headers are stripped, the data
+integrity checked (lost or corrupted packages) and the data content
+filtered (data packets or control packets). Honestly I don't know much
+more than this about these plugins.
+
+\subsubsection{Data Converter/Dispatcher}
+Here the decoder library is called. For example in the case of
+SPIROC2D the library path is \cleanstyle{spiroc2d\_decoder.so}. This
+library takes the uncapped raw data coming from the acquisition source
+(for example the GDCC) and convert it into a stream of blocks of
+events. These blocks are then fed to the Online Monitor and Online
+Event Builder programs.  The decoder library needs to know the channel
+mapping (the geometry) of the detector to associate to every channel
+its position in space.
+
+However, maybe because of some bugs or lack of time, the SPIROC2D
+converter for the WAGASCI prototype commissioning run was disabled. In
+the \cleanstyle{cmd\_dif.py} file the line needed to start the
+conversion was commented out and function's result was always set to
+positive, thus completely disabling Online Monitor capabilities of
+Pyrame. I am going to enable it again and debug it (TO-DO)
+
+Moreover, in the current Pyrame implementation only the Shared Memory
+and Raw file distribution buses are implemented (check the
+\cleanstyle{cmd\_acq.c} file).
+
+\subsubsection{Online Monitor}
+The WAGASCI online monitor code is contained in the
+\cleanstyle{anpan/guis/om\_wagasci} folder. It is a program external
+to Pyrame and WAGASCI that needs to be started by hand. It however
+interacts with Pyrame under the hood. It receives the Blocks and
+Events created by the ``Data Converter/Dispatcher'' face. More info
+about the More info can be found in section TO-DO.\@
+
+In Pyrame the raw data is organized in events and blocks of events. If
+you want to understand in depth the WAGASCI Online Monitor it is
+almost mandatory that you read this article~\cite{Rubio-Roy:2017nco},
+otherwise the following subsections won't make any sense.
+
+\subsubsection{Events}
+On a raw level, an event is just a set of hits. Each hit is roughly
+described by the time, space and charge released. Other parameters may
+also refer to an event. An event is described by a struct like this:
+\begin{lstlisting}
+      struct event {
+        char **time;             // List of string containing hit times
+        int time_size;           // Number of hit times
+        char **space;            // List of string containing hit points
+        int space_size;          // Number of hit points
+        char **data;             // List of string containing various
+                                 // event properties.
+        int data_size;           // Number of elements in data
+        char used;               // ??
+        struct event *next;      // Pointer to the next event
+        struct block *block;     // Pointer to the block
+      };
+\end{lstlisting}
+Up to now the \cleanstyle{data} list contains the following elements:
+\begin{itemize}
+\item ``spill'': spill number.
+\item ``spill\_flag'': the spill flag is set when the event happens
+  inside of the beam spill time-frame. This means that the particle
+  detected is most probably the result of a neutrino interaction from
+  the neutrino beam inside or outside the detector.
+\item ``roc'': ROC chip number.
+\item ``rocchan'': ROC chip channel number.
+\item ``bcid'': BCID (Bunch Crossing IDentification). Despite the
+  misleading name, the BCID indicates just the number of rise time of
+  the slow since the \textit{startacq} signal. More on this on
+  TO-DO.\@
+\item ``sca'': Switched Capacitor Array number.
+\item ``plane'': Plane number.
+\item ``channel'': Channel number.
+\item ``en'': Energy (charge). This field correspond to the ADC count.
+\item TDC time: ``time''
+\item ``hit'': The hit flag is set if the event contains a hit. The
+  hit may be due to a particle passage inside of the detector or
+  simply by dark or electric noise.
+\item ``gain'': The gain flag is set when we want to measure the
+  gain. In that case we compare the pedestal and first hit position to
+  calculate the gain.
+\end{itemize}
+
+\subsubsection{Blocks}
+A block is a set of events bundled together according to a certain
+criterion (usually the spill number or bunch number). It is described
+by a struct like this:
+\begin{lstlisting}
+      struct block {
+        int id;                  // Block identifier
+        char finalized;          // ??
+        int nb_events;           // Number of events in the block
+        char **props;            // List of strings that can contain
+                                 // various block properties as the
+                                 // spill number, spill flag, etc...
+        int props_size;          // Number of props strings
+        char *bstr;              // ??
+        struct evtstruct *es;    // This struct is used to navigate
+                                 // through the various props strings
+        struct event *events;    // List of events
+        struct block *next;      // Pointer to the next block
+      };
+\end{lstlisting}
+Up to now the \cleanstyle{props} list contains the following elements:
+\begin{itemize}
+\item spill number: ``spill''
+\item spill flag: ``spill\_flag''
+\end{itemize}
+
+The ``spill\_flag'' is ``1'' during the spill time frame and ``0''
+otherwise. This flag is useful to discriminate between cosmic muons
+and particles coming from accelerated neutrino interactions.  For
+further info about the WAGASCI spill timings refer to section TO-DO.\@
+
+\subsection{The Run Control Module}\label{sec:RC}
+
+TO-DO
+
+\subsection{The Storage Module}\label{sec:STORAGE}
+
+Storage is a Pyrame module that manages data created by other modules
+and its inclusion on the RunDB.\@ For further info about the RunDB
+module refer to the Pyrame documentation.
+
+Storage allows to use a mount point and a path to transparently store
+data elsewhere in the network. It also automates common tasks such as
+saving the calxml configuration and a log with optional varmod
+variables (e.g.:\ stats) at the same place as data files.
+
+As far as I know there are only two kinds of storage that the Storage
+Module can handle. One is the standard file on a file system and
+another one is a NFS share on the network.
+
+In the case of a standard file this is the format for the mp variable:
+\begin{lstlisting}
+      <param name="storage_brg_mp">file:///</param>
+\end{lstlisting}
+In the case of a NFS share this is the format for the mp variable:
+\begin{lstlisting}
+      <param name="storage_brg_mp">nfs://server/nfs</param>
+\end{lstlisting}
+
+% To autostart services (modules) when Pyrame is started edit file
+% pyrame/launcher/services.txt To add default module ports edit the
+% file pyrame/ports.txt
+
+\subsection{Run and interact with Pyrame}
+There are several ways to interact with Pyrame and its modules. When
+the AnpanInstaller script installs Pyrame, it makes sure that Pyrame
+is automatically started at every reboot. On system with
+\cleanstyle{systemctl}\footnote{Both Ubuntu 18.04 and CentOS 7 use
+  \cleanstyle{systemctl}} Pyrame is started as a system daemon and its
+execution is controller with the \cleanstyle{systemctl} or
+\cleanstyle{service} shell commands. To enable Pyrame at startup use
+\begin{lstlisting}
+      sudo systemctl enable pyrame
+\end{lstlisting}
+To disable it
+\begin{lstlisting}
+      sudo systemctl disable pyrame
+\end{lstlisting}
+To start a single time Pyrame
+\begin{lstlisting}
+      sudo systemctl start pyrame
+\end{lstlisting}
+To stop it
+\begin{lstlisting}
+      sudo systemctl stop pyrame
+\end{lstlisting}
+
+Moreover there are several ways to interact with Pyrame modules. If a
+module is already running the simplest way to interact with it is to
+open a terminal and use the command:
+\begin{lstlisting}
+      chkpyr2.py hostname port function parameters
+\end{lstlisting}
+where \cleanstyle{hostname} is the IP address of the module, for
+example \cleanstyle{localhost}, \cleanstyle{port} is the port number
+of the module, \cleanstyle{function} is the particular function that
+you want the module to perform and \cleanstyle{parameters} are the
+parameters to be passed to that function. All the public functions of
+the Pyrame and Anpan/Calicoes modules are listed on the online
+documentations.
+
+You can also interact with Pyrame modules from external python scripts
+\dots TO-DO
+
+\subsection{Pyrame Configuration}\label{sec:pyrame-configuration}
+
+TO-DO
+
+
+\section{Anpan}
+\begin{itemize}
+\item WAGASCI\_PORT=12000
+\item ACQPC\_PORT=12001
+\item GDCC\_PORT=12003
+\item CCC\_PORT=12004
+\item DIF\_PORT=12005
+\item ASU\_PORT=12006
+\end{itemize}
+
+\chapter{ROOT 6}
+ROOT is a modular scientific software framework. It provides all the
+functionalities needed to deal with big data processing, statistical
+analysis, visualization and storage. It is mainly written in C++ but
+integrated with other languages such as Python and R\footnote{Text
+  taken from ROOT homepage}.
+
+This chapter is very short because much of the content that should go
+here is already covered in section~\ref{root5}. The only real
+difference is that here we are compiling the latest version of ROOT with
+the latest compilers (at the time of writing: \today).
+
+I am assuming here that you have never installed ROOT before. That is
+why we are cloning the git repository. If you already have another
+installation of ROOT and you just want to upgrade or reinstall, please
+make the proper modification to these steps. I am assuming that you
+are capable of that.
+
+This chapter is tailored towards Ubuntu 18.04 but it should be the
+same for any other Linux distribution with some minor modifications.
+
+\section{Preliminaries} First install all the packages listed in
+section~\ref{packages}. Again, some of them may not be strictly needed
+but cherry-picking which package is needed and which not could be very
+time consuming. If you have very strict space limitations and you are
+somewhat forced to install the least amount of software, I really feel
+sorry for you but don't expect me to willingly help you\dots
+
+Then make you sure you are using the last version of the compilers by
+issuing
+\begin{lstlisting}
+      gcc --version
+\end{lstlisting}
+The output should be
+\begin{lstlisting}
+      gcc (Ubuntu 7.3.0-16ubuntu3) 7.3.0
+      [...]
+\end{lstlisting}
+
+\section{ROOT Installation}
+
+Then follow the step~\ref{root-1} of section~\ref{root5}. Instead of step~\ref{root-2}, type
+\begin{lstlisting}
+      mkdir -p $HOME/Code/ROOT/{sources,6-14-02,6-14-02-build}
+      cd $HOME/Code/ROOT
+\end{lstlisting}
+Instead of step~\ref{root-3}, type
+\begin{lstlisting}
+      git clone http://github.com/root-project/root.git sources
+      cd sources
+      git checkout -b v6-14-02 v6-14-02
+      cd ../6-14-02-build
+\end{lstlisting}
+Instead of step~\ref{root-4}, type
+\begin{lstlisting}
+      cmake -Dbuiltin_xrootd=ON
+-DCMAKE_INSTALL_PREFIX=$HOME/Code/ROOT/6-14-02 ../sources
+\end{lstlisting}
+
+The following steps are the very same of section~\ref{root5} where in
+place of \cleanstyle{5-34-00-patches} you just have to type
+\cleanstyle{6-14-02}.
 
 \chapter{NEUT 5.4.0}
 NEUT is a neutrino interaction simulation program library that has
@@ -616,494 +1473,254 @@ wget https://www.dropbox.com/s/n7n1wiivn1noets/patchy4.tar.gz
 \end{lstlisting}
 \end{enumerate}
 
-\chapter{ROOT 6}
-ROOT is a modular scientific software framework. It provides all the
-functionalities needed to deal with big data processing, statistical
-analysis, visualization and storage. It is mainly written in C++ but
-integrated with other languages such as Python and R\footnote{Text
-  taken from ROOT homepage}.
+\chapter{Appendix}
+\section{GDCC cheat-sheet}\label{sec:gdcc-cheat-sheet}
+This cheat-sheet is intended for debug only. Normal users (myself
+included) should not need to care about this. I have included it in
+the appendix just in case I would need it in future (but I really hope
+not). The GDCC is built on standard Ethernet. Communication to and from it
+is done via RAW Ethernet packets:
+\subsection{Fast command packet format}
+Fast commands are generated via two mechanisms. The first is in direct
+response to various hardware inputs from the CCC into the GDCC and the
+second is manually via the GDCC \textrightarrow COMPUTER link.
 
-This chapter is very short because much of the content that should go
-here is already covered in section~\ref{root5}. The only real
-difference is that here we are compiling the latest version of ROOT with
-the latest compilers (at the time of writing: \today).
+When done via this method the packet used is smaller than the normal
+GDCC packet format, and is processed separately.
+\begin{table}[ht]
+  \centering \resizebox{\textwidth}{!}{ \bgroup
+    \def\arraystretch{1.5}% 1 is the default, change whatever you need
+    \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
+      \hline
+      Dst MAC & Src MAC & Ethernet Type & Command\_Word & DIF Link & %
+                                                                     Comma &  Data & parity & PAD & CRC32 \\ %
+      \hline
+      6 Bytes & 6 Bytes & 2 bytes & 2 Bytes & 2 Bytes & 1 Byte & %
+                                                                 1 Byte & 2 Bytes & Pad to min Ethernet size & 4 bytes \\
+      \hline
+    \end{tabular}
+    \egroup }
+  \caption{Fast command packet format}
+\end{table}
 
-I am assuming here that you have never installed ROOT before. That is
-why we are cloning the git repository. If you already have another
-installation of ROOT and you just want to upgrade or reinstall, please
-make the proper modification to these steps. I am assuming that you
-are capable of that.
-
-This chapter is tailored towards Ubuntu 18.04 but it should be the
-same for any other Linux distribution with some minor modifications.
-
-\section{Preliminaries} First install all the packages listed in
-section~\ref{packages}. Again, some of them may not be strictly needed
-but cherry-picking which package is needed and which not could be very
-time consuming. If you have very strict space limitations and you are
-somewhat forced to install the least amount of software, I really feel
-sorry for you but don't expect me to willingly help you\dots
-
-Then make you sure you are using the last version of the compilers by
-issuing
-\begin{lstlisting}
-      gcc --version
-\end{lstlisting}
-The output should be
-\begin{lstlisting}
-      gcc (Ubuntu 7.3.0-16ubuntu3) 7.3.0
-      [...]
-\end{lstlisting}
-
-\section{ROOT Installation}
-
-Then follow the step~\ref{root-1} of section~\ref{root5}. Instead of step~\ref{root-2}, type
-\begin{lstlisting}
-      mkdir -p $HOME/Code/ROOT/{sources,6-14-02,6-14-02-build}
-      cd $HOME/Code/ROOT
-\end{lstlisting}
-Instead of step~\ref{root-3}, type
-\begin{lstlisting}
-      git clone http://github.com/root-project/root.git sources
-      cd sources
-      git checkout -b v6-14-02 v6-14-02
-      cd ../6-14-02-build
-\end{lstlisting}
-Instead of step~\ref{root-4}, type
-\begin{lstlisting}
-      cmake -Dbuiltin_xrootd=ON
--DCMAKE_INSTALL_PREFIX=$HOME/Code/ROOT/6-14-02 ../sources
-\end{lstlisting}
-
-The following steps are the very same of section~\ref{root5} where in
-place of \cleanstyle{5-34-00-patches} you just have to type
-\cleanstyle{6-14-02}.
-
-\chapter{DAQ software}
-The main software for data acquisition of the WAGASCI experiment is
-called Anpan (Acquisition Networked Program for Accelerated
-Neutrinos). It is based on the Calicoes software that was used for the
-Silicium Tungsten Electromagnetic Calorimeter (SiW-ECAL) prototype of
-the future International Linear Collider, developed by Frédéric
-Magniette and Miguel Rubio-Roy. Both Anpan and Calicoes are based on
-the Pyrame framework of which they two similar implementations.
-
-Until Summer 2018, we were using the Calicoes software without almost
-any modification as the data acquisition software for the WAGASCI
-prototype (i.e. Proton Module + WAGASCI water-in detector + Ingrid
-module).
-
-Between the end of the WAGASCI prototype commissioning run in Summer
-2018 and the beginning of the WAGASCI Experiment Physics run in April
-2019, I started my Ph.D. at YNU and I decided to further develop and
-improve the WAGASCI DAQ system. So I took the decision (quite
-one-sidedly I have to admit) to change the name of the acquisition
-software and release it under the GPLv3 license.
-
-It is not clear which license is Calicoes released according
-to. Anyway Pyrame (which is written by the same developers) is
-released under GPLv3 so I assumed that Calicoes is released under the
-same license. This entitles me (Pintaudi Giorgio) to release again a
-modified version of the software under different name but giving due
-credit to the original authors (Frédéric Magniette and Miguel
-Rubio-Roy).
-
-I have chosen that name because wagashi (after which the WAGASCI
-experiment is named) in Japanese means ``traditional sweets'' and
-anpan (a soft bun filled with red soy beans paste) is a kind of
-Japanese sweet snack (even if not properly an strictly traditional
-sweet). Anyway, I love anpan and I eat one of them almost everyday so
-we can say that the development of this software was fueled mainly by
-anpan. From that the name choice.
-
-This chapter of the documentation isn't a thorough guide of all the
-code that makes up anpan because much of that is already explained in
-the \href{http://llr.in2p3.fr/sites/pyrame/documentation/}{Pyrame
-  documentation website} and
-\href{http://llr.in2p3.fr/sites/pyrame/calicoes/documentation/}{Calicoes
-  documentation website}. Anyways those websites are mainly aimed at
-developers who are well-versed in scientific programming and are not
-afraid of reading through much of the source code. Instead, this guide
-is meant to be a user manual for the physicist who just wants to use
-the software (and maybe only write some simple scripts).
-
-One must always keep in mind that most of the times scientific
-software is not written by a big team of programmers with a steady job
-and a steady income, but by a few researchers or worse grad students
-with little (or no) income whatsoever, unsteady future prospects and a
-very limited budget. Because of the lack of money and man-power,
-usually the first thing that get cut or reduced is documentation
-(because it is not strictly necessary for the software to run). This,
-as long as the original developers are also the users of the software,
-has no tangible consequences. But as new physicists start to use the
-software an evil-loop onsets where software is used just as-is and
-works-just-because-it-works. Luckily the Calicoes and Pyrame software
-is adequately documented and with this guide I would like to close the
-gap between users and software even further.
-
-\section{Pyrame}
-I won't go into detail describing the Pyrame framework since much of
-what I have to say is already covered in the
-\href{http://llr.in2p3.fr/sites/pyrame/documentation/}{Pyrame
-  documentation website}. So before continuing to the following I
-would suggest the reader to take a quick look there and get a rough
-idea of what is happening inside of Pyrame. This section is merely
-intended as an appendix and a review of the content shown there. The
-only real difference with the online documentation is that, instead of
-trying to explain how the software works, I will take the point of
-view of the user and I will only focus on how to use Pyrame to get
-some work done.
-
-First, what the user need to understand is that Pyrame is a
-distributed software. This means that each part or function of Pyrame
-can be located on a different machine. Each of those parts are called
-``modules'' and each module communicates with the others through the
-exchange of TCP/IP packets. If you don't know what the TCP/IP protocol
-is you can consult the Wikipedia pages:
-\href{https://en.wikipedia.org/wiki/Transmission_Control_Protocol}{TCP}
-and \href{https://en.wikipedia.org/wiki/IPv4}{IP}, that should be
-enough.
-
-Basically each machine able to get an IP address can open a network
-port through which a certain application (or in the case of Pyrame a
-certain module) can communicate and interact with the modules
-``outside''. For modules residing on the same machine the
-\cleanstyle{localhost=127.0.0.1} IP address must be used. The purpose
-of the localhost IP address is simply to send an outgoing packet back
-in. So for example if we want to reach the Configuration Module (CMOD)
-that is running on the port \cleanstyle{CMOD\_PORT=9002} on the local
-machine we need the only to use the couple
-\cleanstyle{localhost:CMOD\_PORT} or explicitly
-\cleanstyle{127.0.0.1:9002}. Or if we want to communicate with the
-Variables Module (VARMOD) that is running on the port
-\cleanstyle{VARMOD\_PORT=9001} on another machine in the same sub-net
-with IP \cleanstyle{192.168.10.100} we would address it as
-\cleanstyle{192.168.10.100:9001} and so on.  The list of all the
-default ports is located in \cleanstyle{/opt/pyrame/ports.txt}
-
-There are 7 fundamental modules that must be always running during
-data acquisition for Pyrame to function correctly:
 \begin{itemize}
-\item The Variables module: \cleanstyle{VARMOD\_PORT=9001}
-\item The Configuration module: \cleanstyle{CMOD\_PORT=9002}
-\item The Mount Datadir Module: \cleanstyle{MOUNTD\_PORT=9005}
-\item The Acquisition-Chain Module: \cleanstyle{ACQ\_PORT=9010}
-\item The Run Control Module: \cleanstyle{RC\_PORT=9014}
-\item The Storage Module: \cleanstyle{STORAGE\_PORT=9020}
-\end{itemize}
-There may be other modules running depending on the specific
-configuration. The needed modules are usually started automatically
-when a configuration file is loaded so the user doesn't need to worry
-about that. To learn more about the configuration file go to section
-TO-DO.\@
-
-Starting from Section~\ref{sec:CMOD} I will give a short description
-of each of these modules, but before that I would like to talk about
-the ``State Machine''.
-
-\subsection{State Machine}
-In Pyrame, the detector is always thought to be in one of four
-states. They are:
-\begin{enumerate}
-\item\label{undefined} UNDEFINED:\ The detector state has not been
-  probed yet. This is the state of the detector before Pyrame has
-  started or after it has ended.
-\item READY:\ The detector itself is in the same UNDEFINED state as
-  before but the software has been initialized and the detector
-  configuration has been loaded into memory.
-\item CONFIGURED or RECONFIGURED:\ The configuration has been applied
-  to the detector. This means that the firmware of the various boards
-  has been configured, the power supplies turned on, the voltage set
-  up and so on. The detector is ready to take data.
-\item\label{acquiring} ACQUIRING The detector is acquiring data.
-\end{enumerate}
-The principle at the base of the Pyrame workflow is that the user must
-go through all the steps from~\ref{undefined} to~\ref{acquiring} in
-order to take data. The software will take charge of managing all the
-synchronization issues.  All the transitions between machine state can
-be accomplished with the aid of shell scripts called from a terminal:
-\cleanstyle{load\_config\_file.sh}, \cleanstyle{initialize.sh},
-\cleanstyle{configure.sh}, etc\dots. It is also possible to use the
-CouchDB web-GUI to manage the transitions.
-\begin{figure}
-  \includegraphics[width=\linewidth]{state_machine.doc.png}
-  \caption{Pyrame State Machine}\label{fig:state-machine}
-\end{figure}
-
-\subsection{The Configuration Module}\label{sec:CMOD}
-
-The configuration module (called also CMOD) is in charge of many
-things. First, it is dedicated to configuration storage and export.
-Every Pyrame module can register in the cmod and store its
-configuration parameters. The configuration parameters and the modules
-themselves are organized as a tree-like structure representing the
-actual structure of the detector.  TO-DO how modules can edit the
-configuration?
-
-Usually the user just load a configuration file in the cmod using the
-shell script \cleanstyle{load\_config\_file.sh filename.xml}. The cmod
-contains at any time a copy of the configuration of all the modules
-and it can generate xml files containing all the parameters to be used
-with calxml.
-
-Another role that cmod plays is to manage the transitions between
-different states through the \cleanstyle{transition\_cmod}
-function. Again, usually this transition is managed by shell scripts
-or directly by the GUI so cmod is quite transparent to the user.
-
-\subsection{The Variables Module}\label{sec:VARMOD}
-
-The varmod is a centralized service that allows all the modules to
-share variables for collecting statistics or sharing global
-information. You can store a value associated with a name (a variable)
-and then get it back. You can also make some basic operations on the
-variables. For more information refer to the Pyrame documentation.
-
-\subsection{The Acquisition-Chain Module}\label{sec:ACQ}
-
-In my opinion, understanding completely the Pyrame Acquisition-Chain
-is the most daunting task, if one really wants to know how the Pyrame
-software works internally. Since I am far from an expert in that
-field, I will only gather here what I have understood so far.
-
-From the perspective of the user, reading the
-\href{file:///opt/pyrame/doc/cmd_acq.html}{Pyrame documentation}, the
-comments in the configuration file and the comments in the
-\cleanstyle{cmd\_acqpc.py} file should be enough to get things going
-in almost every real-world scenario.
-
-For the developers and more experienced users let's start by taking a
-look at the graph~\ref{fig:acq-server}:
-\begin{figure}
-  \includegraphics[width=\linewidth]{acq_server.doc.png}
-  \caption{Pyrame State Machine}\label{fig:acq-server}
-\end{figure}
-I will only focus on the WAGASCI case. All the configuration regarding
-the acquisition chain is done under the \cleanstyle{pcacq\_X} field in
-the configuration file. If you take a pre-existing configuration file
-written by myself you will find many descriptive comments in that
-section that hopefully will guide you through a painless
-configuration.
-
-\subsubsection{Media acquisition}
-The ``media acquisition'' phase is controlled by the acquisition
-plugins. What these plugins do is to ``open'' an acquisition media and
-get the data from there. The acquisition media can basically be of two
-types: the Ethernet port (with TCP or UDP protocols) or a raw file
-that was previously acquired (for testing or debugging purposes). For
-a more in-depth description of every plugin refer to
-\href{file:///opt/pyrame/doc/cmd_acq.html}{this page} and its
-sub-pages. After the data has been acquired, it is not ready to be
-analyzed yet because it contains the IP/TCP caps and it is in binary
-form.
-
-You can take a look at the source code and related comments in the
-\cleanstyle{anpan/cmd\_acqpc/cmd\_acqpc.py} file and in particular in
-the \cleanstyle{init\_fin\_acqpc} function where every acquisition
-plugin is listed and explained.
-
-\subsubsection{Data uncap}
-In this face, the acquired data is uncapped. This means that, for
-example in the TCP case, the IP/TCP headers are stripped, the data
-integrity checked (lost or corrupted packages) and the data content
-filtered (data packets or control packets). Honestly I don't know much
-more than this about these plugins.
-
-\subsubsection{Data Converter/Dispatcher}
-Here the decoder library is called. For example in the case of
-SPIROC2D the library path is \cleanstyle{spiroc2d\_decoder.so}. This
-library takes the uncapped raw data coming from the acquisition source
-(for example the GDCC) and convert it into a stream of blocks of
-events. These blocks are then fed to the Online Monitor and Online
-Event Builder programs.  The decoder library needs to know the channel
-mapping (the geometry) of the detector to associate to every channel
-its position in space.
-
-However, maybe because of some bugs or lack of time, the SPIROC2D
-converter for the WAGASCI prototype commissioning run was disabled. In
-the \cleanstyle{cmd\_dif.py} file the line needed to start the
-conversion was commented out and function's result was always set to
-positive, thus completely disabling Online Monitor capabilities of
-Pyrame. I am going to enable it again and debug it (TO-DO)
-
-Moreover, in the current Pyrame implementation only the Shared Memory
-and Raw file distribution buses are implemented (check the
-\cleanstyle{cmd_acq.c} file).
-
-\subsubsection{Online Monitor}
-The WAGASCI online monitor code is contained in the
-\cleanstyle{anpan/guis/om\_wagasci} folder. It is a program external
-to Pyrame and WAGASCI that needs to be started by hand. It however
-interacts with Pyrame under the hood. It receives the Blocks and
-Events created by the ``Data Converter/Dispatcher'' face. More info
-about the More info can be found in section TO-DO.\@
-
-\subsection{The Run Control Module}\label{sec:RC}
-
-TO-DO
-
-\subsection{The Storage Module}\label{sec:STORAGE}
-
-Storage is a Pyrame module that manages data created by other modules
-and its inclusion on the RunDB.\@ For further info about the RunDB
-module refer to the Pyrame documentation.
-
-Storage allows to use a mount point and a path to transparently store
-data elsewhere in the network. It also automates common tasks such as
-saving the calxml configuration and a log with optional varmod
-variables (e.g.:\ stats) at the same place as data files.
-
-As far as I know there are only two kinds of storage that the Storage
-Module can handle. One is the standard file on a file system and
-another one is a NFS share on the network.
-
-In the case of a standard file this is the format for the mp variable:
-\begin{lstlisting}
-      <param name="storage_brg_mp">file:///</param>
-\end{lstlisting}
-In the case of a NFS share this is the format for the mp variable:
-\begin{lstlisting}
-      <param name="storage_brg_mp">nfs://server/nfs</param>
-\end{lstlisting}
-
-% To autostart services (modules) when Pyrame is started edit file
-% pyrame/launcher/services.txt To add default module ports edit the
-% file pyrame/ports.txt
-
-\subsection{Run and interact with Pyrame}
-There are several ways to interact with Pyrame and its modules. When
-the AnpanInstaller script installs Pyrame, it makes sure that Pyrame
-is automatically started at every reboot. On system with
-\cleanstyle{systemctl}\footnote{Both Ubuntu 18.04 and CentOS 7 use
-  \cleanstyle{systemctl}} Pyrame is started as a system daemon and its
-execution is controller with the \cleanstyle{systemctl} or
-\cleanstyle{service} shell commands. To enable Pyrame at startup use
-\begin{lstlisting}
-      sudo systemctl enable pyrame
-\end{lstlisting}
-To disable it
-\begin{lstlisting}
-      sudo systemctl disable pyrame
-\end{lstlisting}
-To start a single time Pyrame
-\begin{lstlisting}
-      sudo systemctl start pyrame
-\end{lstlisting}
-To stop it
-\begin{lstlisting}
-      sudo systemctl stop pyrame
-\end{lstlisting}
-
-Moreover there are several ways to interact with Pyrame modules. If a
-module is already running the simplest way to interact with it is to
-open a terminal and use the command:
-\begin{lstlisting}
-      chkpyr2.py hostname port function parameters
-\end{lstlisting}
-where \cleanstyle{hostname} is the IP address of the module, for
-example \cleanstyle{localhost}, \cleanstyle{port} is the port number
-of the module, \cleanstyle{function} is the particular function that
-you want the module to perform and \cleanstyle{parameters} are the
-parameters to be passed to that function. All the public functions of
-the Pyrame and Anpan/Calicoes modules are listed on the online
-documentations.
-
-You can also interact with Pyrame modules from external python scripts
-\dots TO-DO
-
-\subsection{Pyrame Configuration}\label{sec:pyrame-configuration}
-
-TO-DO
-
-\subsection{Blocks and Events}\label{sec:blocks-events}
-In Pyrame the raw data is organized in events and blocks of events. As
-far as I understood, events are grouped into blocks that are sent
-between Pyrame modules.
-
-\subsubsection{Event}
-On a raw level, an event is just a single hit TO-CHECK.\@ Each hit is
-roughly described by the time, space and charge released. Other
-parameters that may refer to an event are described below.
-
-An event is described by a struct like this:
-\begin{lstlisting}
-      struct event {
-        char **time;             // List of string containing hit times
-        int time_size;           // Number of hit times
-        char **space;            // List of string containing hit points
-        int space_size;          // Number of hit points
-        char **data;             // List of string containing various
-                                 // event properties.
-        int data_size;           // Number of elements in data
-        char used;               // ??
-        struct event *next;      // Pointer to the next event
-        struct block *block;     // Pointer to the block
-      };
-\end{lstlisting}
-Up to now the \cleanstyle{data} list contains the following elements:
-\begin{itemize}
-\item ``spill'': spill number.
-\item ``spill\_flag'': the spill flag is set when the event happens
-  inside of the beam spill time-frame. This means that the particle
-  detected is most probably the result of a neutrino interaction from
-  the neutrino beam inside or outside the detector.
-\item ``roc'': ROC chip number.
-\item ``rocchan'': ROC chip channel number.
-\item ``bcid'': BCID (Bunch Crossing IDentification). Despite the
-  misleading name, the BCID indicates just the number of rise time of
-  the slow since the \textit{startacq} signal. More on this on TO-DO.\@
-\item ``sca'': Switched Capacitor Array number.
-\item ``plane'': Plane number.
-\item ``channel'': Channel number.
-\item ``en'': Energy (charge). This field correspond to the ADC count.
-\item TDC time: ``time''
-\item ``hit'': The hit flag is set if the event contains a hit. The
-  hit may be due to a particle passage inside of the detector or
-  simply by dark or electric noise.
-\item ``gain'': The gain flag is set when we want to measure the
-  gain. In that case we compare the pedestal and first hit position to
-  calculate the gain.
+\item Ethernet type: set to \texttt{0x0809} for Fast Command. These
+  are generally not used in the real world, so we chose them at
+  random. Packets with a different Ethernet Type will be ignored.
+\item Command word: set to a constant \texttt{0xFA57}. Future
+  operations may use a different Command\_Word for other usage cases.
+\item DIF Link: A mask which defines which port the command is for. A
+  value of \texttt{0xFFFF} would be used as a broadcast to all
+  currently active DIF links.
+\item Comma: comma character to use
+\item Data: defines which byte to send as the data byte.
+\item Parity: is a simple check, the bits of this are defined as
+  follows
+  \begin{table}[H]
+    \centering \bgroup
+    \def\arraystretch{1.3}% 1 is the default, change whatever you need
+    \begin{tabular}{|c|c|}
+      \hline
+      \textbf{Bit} & \textbf{Data Used} \\
+      \hline
+      0 & Lower 8 bits of Command\_Word \\
+      \hline
+      1 & Upper 8 bits of Command\_Word \\
+      \hline
+      2 & Lower 8 bits of DIF\_Link \\
+      \hline
+      3 & Upper 8 bits of DIF\_Link \\
+      \hline
+      4 & Comma \\
+      \hline
+      5 & Data \\
+      \hline
+    \end{tabular}
+    \egroup
+  \end{table}
+  We use an Even Parity scheme, and the reason for using this is that
+  the command is recognised almost as soon as the parity is validated,
+  rather than waiting for the full CRC32 to be verified.
 \end{itemize}
 
-\subsubsection{Block}
-A block is described by a struct like this:
-\begin{lstlisting}
-      struct block {
-        int id;                  // Block identifier
-        char finalized;          // ??
-        int nb_events;           // Number of events in the block
-        char **props;            // List of strings that can contain
-                                 // various block properties as the
-                                 // spill number, spill flag, etc...
-        int props_size;          // Number of props strings
-        char *bstr;              // ??
-        struct evtstruct *es;    // This struct is used to navigate
-                                 // through the various props strings
-        struct event *events;    // List of events
-        struct block *next;      // Pointer to the next block
-      };
-\end{lstlisting}
-Up to now the \cleanstyle{props} list contains the following elements:
+
+\subsection{GDCC packet format}
+\begin{table}[ht]
+  \centering \resizebox{\textwidth}{!}{ \bgroup
+    \def\arraystretch{1.5}% 1 is the default, change whatever you need
+    \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
+      \hline
+      Dst MAC & Src MAC & Ethernet Type & GDCC\_type & GDCC\_modifier %
+      & GDCC\_pktID  & GDCC\_dataLength & GDCC\_Data & PAD CRC32 \\
+      \hline
+      6 Bytes & 6 Bytes & 2 bytes & 2 Bytes & 2 Bytes & 2 Byte & %
+                                                                 2 Byte  & Variable Pad to min Ethernet size & 4 bytes \\
+      \hline
+    \end{tabular}
+    \egroup }
+  \caption{GDCC packet format}
+\end{table}
+
 \begin{itemize}
-\item spill number: ``spill''
-\item spill flag: ``spill\_flag''
+\item Ethernet type:
+  \begin{itemize}
+  \item \texttt{0x0810}: GDCC data pkt
+  \item \texttt{0x0811}: DIF data pkt
+  \end{itemize}
+\item GDCC type: split in 2 bytes (not all are defined)
+  \begin{itemize}
+  \item Upper (Sub System Encoding):
+    \begin{itemize}
+    \item \texttt{0x00}: GDCC registers (Both directions)
+    \item \texttt{0x01}: DIF transport (Both directions)
+    \item \texttt{0x02}: Diagnose memory (Both directions)
+    \item \texttt{0xFF}: GDCC pkt generator (GDCC \textrightarrow PC)
+    \end{itemize}
+  \item Lower (Operation Encoding):
+    \begin{itemize}
+    \item \texttt{0x00}: GDCC PktGenData (GDCC \textrightarrow PC)
+    \item \texttt{0x01}: Write from PC to GDCC (PC \textrightarrow
+      GDCC)
+    \item \texttt{0x02}: Read from PC to GDCC (PC \textrightarrow
+      GDCC)
+    \item \texttt{0x03}: Write ACK (GDCC \textrightarrow PC)
+    \item \texttt{0x04}: Read reply from GDCC to PC (GDCC
+      \textrightarrow PC)
+    \item \texttt{0x05}: Read NACK (GDCC \textrightarrow PC)
+    \item \texttt{0x08}: pkt\_DIF from PC to DIF (PC \textrightarrow
+      DIF)
+    \item \texttt{0x09}: pkt\_DIF from DIF to PC (DIF \textrightarrow
+      PC)
+    \item \texttt{0xFF}: GDCC Saw Bad Packet (GDCC \textrightarrow PC)
+    \end{itemize}
+  \end{itemize}
+\item GDCC modifier: is used to indicate things such as which DIF link
+  a DIF packet should be sent down, that is currently the only use of
+  it. \texttt{0xFFFF} indicates a broadcast down all DIF links that
+  are currently operational.
+\item GDCC pktID : This is used to track Replies to things. For
+  example a any GDCC register operations will result in a reply, these
+  replies will have the same PktID in them.
+\item GDCC data length: is a measure of how many objects there will be
+  in the GDCC Data array. For Register operations on the GDCC it is
+  the total number of GDCC Register Packets that follow. For DIF
+  operations it is the Number of DIF Packets that follow. For DIF
+  Event data it is the Number of Event Packets that follow.
+\item CRC32: This is not really a user accessible data field. Normally
+  the MAC layer on the Ethernet card will add this, and will strip it
+  on received packets. However, depending on the operation it may or
+  may not be visible and so is included in this definition for
+  completeness. Any packets the fail the CRC32 check on RX at the GDCC
+  will be silently dropped.
 \end{itemize}
 
-The ``spill\_flag'' is ``1'' during the spill time frame and ``0''
-otherwise. This flag is useful to discriminate between cosmic muons
-and particles coming from accelerated neutrino interactions.  For
-further info about the WAGASCI spill timings refer to section TO-DO.\@
+\subsection{GDCC Register Packet Format }
+Access to GDCC registers is done via the following sub packet type.
+\begin{table}[ht]
+  \centering \bgroup
+  \def\arraystretch{1.5}% 1 is the default, change whatever you need
+  \begin{tabular}{|c|c|}
+    \hline
+    Address & Data \\
+    \hline
+    2 Bytes & 4 Bytes \\
+    \hline
+  \end{tabular}
+  \egroup
+\end{table}
+Address is 16 bits, and in general fill all unused data with 0x0 Data
+is 32 bits, even though most registers are 16. This is to allow future
+expansion.
 
-\section{Anpan}
+Lower bits of data are used first, so a register that returns < 32
+bits will return it in the lower bits of the data space, the same for
+writes.
+
+When performing a Read the packet must still include the space for the
+data, even though it will be over written by the GDCC internal
+processing. This just makes things more symmetric for both reads and
+writes.
+
+You can pack as many register sub packets as you want into an
+GDCC\_packet. However, they will all be of the same type, eg, all READ
+or all WRITE, you cannot currently mix them.
+
+\subsection{GDCC DIF Event Packet Format}
+
+When Events come into the GDCC from the DIF they are wrapped in an
+GDCC packet before being sent onward to the COMPUTER. They are dropped
+verbatim into the GDCC\_Data block of the packet. The GDCC-DIF Link
+CRC is retained, so that software can check it if needed.
+
 \begin{itemize}
-\item WAGASCI\_PORT=12000
-\item ACQPC\_PORT=12001
-\item GDCC\_PORT=12003
-\item CCC\_PORT=12004
-\item DIF\_PORT=12005
-\item ASU\_PORT=12006
-\end{itemize}
+\item GDCC\_Type: Will have the upper portion set to DIF Transport and
+  the lower 8 bits set to show which DIF Link it came from.
+\item GDCC\_PktID: Will be the serial number of the packet, which will
+  increase each time, allowing some way to see if there are missing
+  ones.
+\item GDCC\_DataLength: Will show the number of encapsulated DIF
+  Packets
+\end{itemize} Future enhancement might be the addition of a flag to
+say if the packet from the DIF passed the CRC or not.
 
+\subsection{GDCC Memory Map}
+Memory access's to registers inside the GDCC are done using a 16bit
+address. This address is then subdivided into a Block and Register
+range The upper 4 bits define the Block. The lower 12 define the
+Register.
+
+\begin{table}[H]
+  \centering \bgroup
+  \def\arraystretch{1.3}% 1 is the default, change whatever you need
+  \begin{tabular}{|c|c|c|}
+    \hline
+    \textbf{Block} & \textbf{Address} & \textbf{Register} \\
+    \hline
+    \texttt{0x1} & \texttt{0x000} & DIF\_LINK\_TX\_EN \\
+                   & \texttt{0x002} & DIF\_LINK\_RX\_EN \\
+                   & \texttt{0x004} & DIF\_LINK\_RTT \\
+                   & \texttt{0x006} & DIF\_LINK\_AUTONEG\_PAUSE \\
+                   & \texttt{0x008} & DIF\_LINK\_RESTART \\
+                   & \texttt{0x00A} & DIF\_LINK\_STATUS1 \\
+                   & \texttt{0x00B} & DIF\_LINK\_STATUS2 \\
+                   & \texttt{0x00E} & DIF\_LINK\_NO\_SIGNAL \\
+                   & \texttt{0x010} & DIF\_LINK\_DELAY1 \\
+                   & \texttt{0x011} & DIF\_LINK\_DELAY2 \\
+                   & \texttt{0x012} & DIF\_LINK\_DELAY3 \\
+                   & \texttt{0x013} & DIF\_LINK\_DELAY4 \\
+                   & \texttt{0x018} & DIF\_LINK\_RTT1 \\
+                   & \texttt{0x019} & DIF\_LINK\_RTT2 \\
+                   & \texttt{0x01A} & DIF\_LINK\_RTT3 \\
+                   & \texttt{0x01B} & DIF\_LINK\_RTT4 \\
+                   & \texttt{0x020} & DIF\_LINK\_RTT\_DONE \\
+                   & \texttt{0x022} & DIF\_LINK\_LOCKED \\
+                   & \texttt{0x024} & DIF\_LINK\_DCM \\
+    \hline
+    \texttt{0x2} & & \\
+    \hline
+    \texttt{0x3} & & \\
+    \hline
+    \texttt{0x4} & \texttt{0x000} & GDCC\_ENABLES \\
+                   & \texttt{0x001} & GDCC\_TX\_MUX\_COUNT \\
+                   & \texttt{0x006} & GDCC\_DIF\_DATA\_MAC\_L \\
+                   & \texttt{0x007} g& GDCC\_DIF\_DATA\_MAC\_M \\
+                   & \texttt{0x008} & GDCC\_DIF\_DATA\_MAC\_H \\
+                   & \texttt{0x00E} & GDCC\_REVISION \\
+                   & \texttt{0x00F} & GDCC\_VERSION \\
+                   & \texttt{0x010} & GDCC\_PKTGEN\_CONTROL \\
+                   & \texttt{0x011} & GDCC\_PKTGEN\_SIZE \\
+                   & \texttt{0x012} & GDCC\_PKTGEN\_COUNT \\
+                   & \texttt{0x013} & GDCC\_PKTGEN\_DELAY \\
+                   & \texttt{0x014} & GDCC\_PKTGEN\_SEED \\
+                   & \texttt{0x015} & GDCC\_PKTGEN\_TXCOUNT \\
+                   & \texttt{0x016} & GDCC\_PKTGEN\_MAC\_L \\
+                   & \texttt{0x017} &  GDCC\_PKTGEN\_MAC\_M \\
+                   & \texttt{0x018} & GDCC\_PKTGEN\_MAC\_H \\
+    \hline
+  \end{tabular}
+  \egroup
+\end{table}
+\printbibliography
 \end{document}
 
 %%% Local Variables:

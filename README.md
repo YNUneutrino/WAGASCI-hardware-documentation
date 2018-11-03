@@ -25,7 +25,7 @@ charged current neutrino interaction channels.
 This Documentation is written in LaTeX and is intended for internal
 usage only. For this reason, it is missing any introductiory part to
 the T2K and WAGASCI experiments and it is written as a mere list of
-recepies to read and follow in order to understand the particular
+recipes to read and follow in order to understand the particular
 software and hardware infrastructure of the WAGASCI
 experiment. However everyone on Internet can read it and even
 contribute if he or she so wishes.

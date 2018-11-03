@@ -12,4 +12,8 @@ Documentation.log
 Documentation.out
 Documentation.synctex.gz
 Documentation.toc
+Documentation.bbl
+Documentation.bcf
+Documentation.blg
+Documentation.run.xml
 
