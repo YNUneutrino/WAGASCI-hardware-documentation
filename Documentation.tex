@@ -28,6 +28,7 @@
 \usepackage{amsmath}
 \usepackage{color}
 \usepackage{graphicx}
+\usepackage{subcaption}
 \usepackage{grffile}
 \usepackage{fancyref}
 \usepackage{hyperref}
@@ -42,6 +43,7 @@
 \usepackage{enumitem}
 \usepackage{geometry}
 \usepackage{listings}
+\usepackage[export]{adjustbox}
 \usepackage{textcomp}
 \usepackage[backend=biber]{biblatex}
 \addbibresource{../bibliography.bib}
@@ -160,7 +162,6 @@ scenarios and examples.
       boards there are only 3 and instead of arrayed MPPCs there are
       Single MPPCs adapters}\label{DAQ-schematics}
   \end{figure}
-
 \section{SPIROC2D}
 SPIROC is a dedicated very front-end chip developed originally for an
 ILC prototype hadronic Calorimeter with SiPM readout (CALICE
@@ -363,9 +364,9 @@ such a cumbersome manner even if I want to. Anyway \dots
   different support (the white piece of plastic in the pictures) and
   base (the small PCB with 10 holes on each side) if you want.
   \begin{figure}[H]
-    \centering \includegraphics[width=.3\textwidth]{support}\hfill
-    \includegraphics[width=.3\textwidth]{base}\hfill
-    \includegraphics[width=.3\textwidth]{base-glued}
+    \centering \includegraphics[frame,width=.3\textwidth]{support}\hfill
+    \includegraphics[frame,width=.3\textwidth]{base}\hfill
+    \includegraphics[frame,width=.3\textwidth]{base-glued}
     \caption{PCB Base (in the middle) glued to the interface board
       using a plastic support (on the left). The buffer chip must be
       soldered on that base (not shown in the pictures, yet). You can
@@ -381,12 +382,12 @@ such a cumbersome manner even if I want to. Anyway \dots
   needed do the same for the other flat cables coming out the
   connectors J6, J8 and J10.
   \begin{figure}[H]
-    \centering \includegraphics[width=0.7\linewidth]{J2}
+    \centering \includegraphics[frame,width=0.7\linewidth]{J2}
     \caption{J2 connector pin-out}\label{J2}
   \end{figure}
 \item Desolder the M9 chip
   \begin{figure}[H]
-    \centering \includegraphics[width=0.5\linewidth]{desolder}
+    \centering \includegraphics[frame,width=0.5\linewidth]{desolder}
     \caption{CDCLVC1104 chip pin-out}\label{desolder}
   \end{figure}
 \item Referring to Figures~\ref{interface-connections}
@@ -415,9 +416,9 @@ such a cumbersome manner even if I want to. Anyway \dots
   \end{figure}
   \begin{figure}[H]
     \centering
-    \includegraphics[width=.3\textwidth]{interface-pinout1}\hfill
-    \includegraphics[width=.3\textwidth]{interface-pinout2}\hfill
-    \includegraphics[width=.3\textwidth]{ground}
+    \includegraphics[frame,width=.3\textwidth]{interface-pinout1}\hfill
+    \includegraphics[frame,width=.3\textwidth]{interface-pinout2}\hfill
+    \includegraphics[frame,width=.3\textwidth]{ground}
     \caption{Interface connections}\label{interface-connections}
   \end{figure}
   I am sorry but in the document that I was given there is no
@@ -452,7 +453,7 @@ such a cumbersome manner even if I want to. Anyway \dots
   Figure~\ref{connection_flat_cable} for the case of cable 13.
 \item The final result should look more or less like this:
   \begin{figure}[H]
-    \centering \includegraphics[width=0.9\linewidth]{fixed-interface}
+    \centering \includegraphics[frame,width=0.9\linewidth]{fixed-interface}
     \caption{Final result. Notice that the ground wire coming from
       wire 50 of the flat cable is ambiguously red and not black as it
       should be. The green wire is coming off from wire number 49 and
@@ -461,8 +462,54 @@ such a cumbersome manner even if I want to. Anyway \dots
       only one is actually used.}\label{fixed-interface}
   \end{figure}
 \end{enumerate}
+
+\subsection{How to make a Low Voltage cable}
+For bench-testing purposes you may need to make your own Low Voltage
+cable to power the Interface and all the other boards connected to it.
+
+The Low Voltage cable must be connected to the interface using a 5
+pins connector to a vertical wire-to-board socket that looks like
+this:
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.2\linewidth}
+  \centering
+  \includegraphics[width=\linewidth,frame]{low-vol-socket1}
+\end{minipage}%
+\begin{minipage}{0.8\linewidth}
+  \centering
+  \includegraphics[width=0.9\linewidth,frame]{low-vol-socket2}
+\end{minipage}
+%\par
+%\medskip
+%\noindent
+\caption{Vertical wire-to-board 5-pins socket on the Interface board
+  for the Low Voltage connection}\label{low-vol-socket}
+\end{figure}
+To make the cable just buy a male connector (TO-DO insert link) and
+connect the pins following the pin-out of
+Figure~\ref{low-vol-pin-out}.
+\begin{figure}[H]
+  \centering \includegraphics[width=0.5\linewidth]{low-vol-pin-out}
+  \caption{Vertical wire-to-board 5-pins socket on the Interface board
+    for the Low Voltage connection}\label{low-vol-pin-out}
+\end{figure}
+The ground wires can be grouped together in a single wire. The 5V
+wires can be grouped together in a single wire, too. The resulting 2
+wires end of the cable can be terminated as you like and then
+connected to a 5V power supply. The power supply should be able to
+generate at least TO-DO Amperes of current.
   
 \section{DIF}
+I have not much to add about the DIF. It converts the signal from the
+ASUs into HDMI and sends it to the GDCC. It also controls the
+synchronization and reset of the slow clock (BCID). Until present
+there were many issues related to the slow-clock reset and
+synchronization, all of which have been luckily been solved by a DIF
+firmware upgrade. To know more about the DIF please contact Matsushita
+Kouhei (Tokyo University): he was the one that tested the new
+firmware.
+
 \section{GDCC}
 I have not much to add in addition to what is already in literature
 quoted in Section~\ref{sec:overview}. This is the board that I know
@@ -633,7 +680,7 @@ be accomplished with the aid of shell scripts called from a terminal:
 \cleanstyle{configure.sh}, etc\dots. It is also possible to use the
 CouchDB web-GUI to manage the transitions.
 \begin{figure}
-  \includegraphics[width=\linewidth]{state_machine.doc.png}
+  \includegraphics[frame,width=\linewidth]{state_machine.doc.png}
   \caption{Pyrame State Machine}\label{fig:state-machine}
 \end{figure}
 
@@ -682,7 +729,7 @@ in almost every real-world scenario.
 For the developers and more experienced users let's start by taking a
 look at the graph~\ref{fig:acq-server}:
 \begin{figure}
-  \includegraphics[width=\linewidth]{acq_server.doc.png}
+  \includegraphics[frame,width=\linewidth]{acq_server.doc.png}
   \caption{Pyrame State Machine}\label{fig:acq-server}
 \end{figure}
 I will only focus on the WAGASCI case. All the configuration regarding
