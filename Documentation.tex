@@ -1,3 +1,15 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% WAGASCI Hardware and Software Documentation
+% Version 0.1 (7/11/2018)
+% 
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+% 
+% Created by:
+% Pintaudi Giorgio, Yokohama National University
+% giorgio-pintaudi-kx@ynu.jp
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 
 %-------------------------------LATEX SYNTAX----------------------------------
 %
@@ -24,9 +36,10 @@
 
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-%\usepackage[greek,english]{babel}
+\usepackage{CJKutf8}
+\usepackage{epigraph}
 \usepackage{amsmath}
-\usepackage{color}
+\usepackage{xcolor}
 \usepackage{graphicx}
 \usepackage{subcaption}
 \usepackage{grffile}
@@ -38,7 +51,6 @@
 \usepackage{xargs}
 \usepackage{multicol}
 \usepackage{nameref}
-\usepackage[pdftex,dvipsnames]{xcolor}
 \usepackage{sectsty}
 \usepackage{enumitem}
 \usepackage{geometry}
@@ -59,9 +71,9 @@
 \hypersetup{colorlinks=true, linkcolor=black}
 \interfootnotelinepenalty=10000
 
-\subsubsectionfont{\large}
-\subsectionfont{\Large}
-\sectionfont{\LARGE}
+%\subsubsectionfont{\large}
+%\subsectionfont{\Large}
+%\sectionfont{\LARGE}
 
 \definecolor{dkgreen}{rgb}{0,0.6,0}
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
@@ -154,7 +166,7 @@ On the other hand this very documentation is meant more as a ``User
 Guide'', so, while referring to the said literature for the more
 general and technical remarks, I will only focus on practical usage
 scenarios and examples.
-\begin{figure}[H]
+\begin{figure}[ht]
   \centering
     \includegraphics[width=0.7\linewidth]{DAQ-schematics}
     \caption{The schematics of the WAGASCI DAQ system. The very same
@@ -162,61 +174,62 @@ scenarios and examples.
       boards there are only 3 and instead of arrayed MPPCs there are
       Single MPPCs adapters}\label{DAQ-schematics}
   \end{figure}
-\section{SPIROC2D}
-SPIROC is a dedicated very front-end chip developed originally for an
-ILC prototype hadronic Calorimeter with SiPM readout (CALICE
-experiment). It has been realized in 0.35$\mu$m SiGe technology. It
-has been developed to match the requirements of large dynamic range,
-low noise, low consumption, high precision and large number of readout
-channels needed. The SPIROC version used for the WAGASCI DAQ is
-SPIROC2D.
+  \section{SPIROC2D}
+  The SPIROC2D chip can be considered as the heart of the WAGASCI DAQ system. It
+  is directly connected to the MPPCs and plays the role of pre-amplifier,
+  amplifier and digitalization of the raw signal. It is contained in an ASIC
+  called \hyperref[sec:ASU]{ASU} (Section~\ref{sec:ASU}). In
+  Figure~\ref{DAQ-schematics} it is indicated with the general term ASIC.
+  
+  SPIROC is a dedicated very front-end chip developed originally for an ILC
+  prototype hadronic Calorimeter with SiPM readout (CALICE experiment). It has
+  been realized in 0.35$\mu$m SiGe technology. It has been developed to match
+  the requirements of large dynamic range, low noise, low consumption, high
+  precision and large number of readout channels needed. The SPIROC version used
+  for the WAGASCI DAQ is SPIROC2D.
 
-The SPIROC ASIC that reads 36 SiPMs is an evolution of the FLC\_SiPM
-used in the CALICE experiment prototype. The first SPIROC prototype has been
-produced in June 2007 and packaged in a CQFP240 package. A second
-version, SPIROC2, was realized in June 2008 to accommodate a thinner
-TQFP208 package and fix a bug in the ADC.
+  The SPIROC ASIC that reads 36 SiPMs is an evolution of the FLC\_SiPM used in
+  the CALICE experiment prototype. The first SPIROC prototype has been produced
+  in June 2007 and packaged in a CQFP240 package. A second version, SPIROC2, was
+  realized in June 2008 to accommodate a thinner TQFP208 package and fix a bug
+  in the ADC.
 
-SPIROC is an \textbf{auto-triggered} (it is possible to set a
-threshold value below which no data is acquired), \textbf{bi-gain}
-(there are two pre-amplifiers one with low gain for bigger signals and
-another with higher gain for smaller signals), \textbf{36-channel}
-ASIC which allows to measure on each channel the charge from one
-photoelectron to 2000 and the time with a 100ps accurate TDC (be
-warned that accuracy and precision are two distinct concepts).\@ An
-analog memory array (Switched Capacitor Array) with a depth of 16 for
-each is used to store the time information and the charge
-measurement. Refer to Wikipedia for more info about the SCA (this
-should be more than enough if you are an experimental physicist like
-me).
+  SPIROC is an \textbf{auto-triggered} (it is possible to set a threshold value
+  below which no data is acquired), \textbf{bi-gain} (there are two
+  pre-amplifiers one with low gain for bigger signals and another with higher
+  gain for smaller signals), \textbf{36-channel} ASIC which allows to measure on
+  each channel the charge from one photoelectron to 2000 and the time with a
+  100ps accurate TDC (be warned that accuracy and precision are two distinct
+  concepts).\@ An analog memory array (Switched Capacitor Array) with a depth of
+  16 for each is used to store the time information and the charge
+  measurement. Refer to Wikipedia for more info about the SCA (this should be
+  more than enough if you are an experimental physicist like me).
 
-A 12-bit Wilkinson ADC has been embedded to digitize the analog memory
-contents (time and charge on 2 gains). The data are then stored in a 4
-kilobytes RAM.\@ A very complex digital part has been integrated to
-manage all theses features and to transfer the data to the DAQ.\@
+  A 12-bit Wilkinson ADC has been embedded to digitize the analog memory
+  contents (time and charge on 2 gains). The data are then stored in a 4
+  kilobytes RAM.\@ A very complex digital part has been integrated to manage all
+  theses features and to transfer the data to the DAQ.\@
 
-A small list of the most basic SPIROC properties:
-\begin{itemize}
-\item ASIC name: SPIROC (Silicon PM Integrated Read-Out Chip)
-\item Current available version: 2A,2B,2C,2D,2E
-\item Number of channel: 36
-\item Polarity of input signal: positive
-\item Detector read out: SIPM, MPPC, compliant with PM, MA-PM
-\item Max input signal: 2000 photoelectrons at minimum gain
-\end{itemize}
+  A small list of the most basic SPIROC properties:
+  \begin{itemize}
+  \item ASIC name: SPIROC (Silicon PM Integrated Read-Out Chip)
+  \item Current available version: 2A,2B,2C,2D,2E
+  \item Number of channel: 36
+  \item Polarity of input signal: positive
+  \item Detector read out: SIPM, MPPC, compliant with PM, MA-PM
+  \item Max input signal: 2000 photoelectrons at minimum gain
+  \end{itemize}
 
 \subsection{References}
-The documentation about the SPIROC family is quite vast (when compared with
-the GDCC, CCC and DIF boards) but randomly dispersed through the
-net. Here I am providing a compilation of all the available
-literature.
+The documentation about the SPIROC family is quite vast (when compared with the
+GDCC, CCC and DIF boards) but randomly dispersed through the net. Here I am
+providing a compilation of all the available literature.
 
 \begin{itemize}
-\item General articles about pre-amplifiers and amplifiers used for
-  Physics
-  measurements~\cite{Hamamatsu:2001,Bertuccio:1996,Lioliou:2015,Ortec}
-  and of course everything about signal processing that you can find
-  in the Knoll book~\cite{Knoll:2010radiation}.
+\item General articles about pre-amplifiers and amplifiers used for Physics
+  measurements~\cite{Hamamatsu:2001,Bertuccio:1996,Lioliou:2015,Ortec} and of
+  course everything about signal processing that you can find in the Knoll
+  book~\cite{Knoll:2010radiation}.
 \item Articles and slide shows about the SPIROC
   characterization~\cite{Callier:2008,Callier:2009,Fabbri:2009,%
     Callier:2013,Callier:2015}
@@ -225,82 +238,133 @@ literature.
 \end{itemize}
 
 \subsection{Short description}
-Please read this section only after having read at least some of the
-references above otherwise it probably won't make much sense.
+Please read this section only after having read at least some of the references
+above otherwise it probably won't make much sense.
 
 Each channel of SPIROC2 is made of:
 \begin{itemize}
-\item An 8-bit input DAC with a very low power of 1$\mu$W/channel as
-  it is not power pulsed. The DAC also has the particularity of being
-  powered with 5V whereas the rest of the chip is powered with
-  3.5V. Think of this DAQ as a way to fine tune the High Voltage
-  supplied to the MPPCs in a range from -4V to +4V. TO-CHECK the
-  range. This tuning directly reflects on the gain of that particular
-  channel. It is possible to control this value by tweaking the TO-DO
-\item A high gain and a low gain pre-amp in parallel on each input
-  allow handling the large dynamic range. A gain adjustment over 6
-  bits common for the 64 channels has been integrated in
-  SPIROC2. TO-CHECK it is not clear!
-\item The charge is measured on both gains by a ``slow'' shaper (an
-  amplifier with pulse duration of 50–150ns) followed by an analogue
-  memory (SCA) with a depth of 16 capacitors.
-\item The auto-trigger is taken on the high gain path with a high-gain
-  fast shaper followed by a low offset discriminator. In other words
-  the input signal is first processed by the high-gain pre-amp and
-  then compared with a given threshold (that can be adjusted). If the
-  signal is ``over'' the threshold the acquisition is triggered,
-  otherwise the signal is ignored. By low offset I mean that (due to a
-  hardware error) the threshold is not set on the main part of the
-  pulse but on the lower part of the pulse as one can see in
-  figure~\ref{threshold-bug}. This erroneous behavior has been fixed
-  in the SPIROC2E version but it has been shown that it doesn't affect
-  the measure so much as to require a replacement of all the chips.
-  \begin{figure}
+\item An 8-bit input DAC with a very low power of 1$\mu$W/channel as it is not
+  power pulsed. The DAC also has the particularity of being powered with 5V
+  whereas the rest of the chip is powered with 3.5V. Think of this DAQ as a way
+  to fine tune the High Voltage supplied to the MPPCs in a range from -4V to
+  +4V. TO-CHECK the range. This tuning directly reflects on the gain of that
+  particular channel. It is possible to control this value by tweaking the TO-DO
+\item A high gain and a low gain pre-amp in parallel on each input allow
+  handling the large dynamic range. A gain adjustment over 6 bits common for the
+  64 channels has been integrated in SPIROC2. TO-CHECK it is not clear!
+\item The charge is measured on both gains by a ``slow'' shaper (an amplifier
+  with pulse duration of 50–150ns) followed by an analogue memory (SCA) with a
+  depth of 16 capacitors.
+\item The auto-trigger is taken on the high gain path with a high-gain fast
+  shaper followed by a low offset discriminator. In other words the input signal
+  is first processed by the high-gain pre-amp and then compared with a given
+  threshold (that can be adjusted). If the signal is ``over'' the threshold the
+  acquisition is triggered, otherwise the signal is ignored. By low offset I
+  mean that (due to a hardware error) the threshold is not set on the main part
+  of the pulse but on the lower part of the pulse as one can see in
+  figure~\ref{threshold-bug}. This erroneous behavior has been fixed in the
+  SPIROC2E version but it has been shown that it doesn't affect the measure so
+  much as to require a replacement of all the chips.
+  \begin{figure}[ht]
     \includegraphics[width=\linewidth]{threshold-bug.png}
-    \caption{The threshold should be applied on the upper part of the
-      signal and not on the lower. This figure shows two signals over
-      the respective thresholds. The blue lines show where the
-      threshold should be: in this case only signal ABOVE the
-      threshold value trigger acquisition. The red lines show where
-      the threshold actually is: in this case only signals BELOW the
-      threshold value trigger acquisition.}\label{threshold-bug}
+    \caption{The threshold should be applied on the upper part of the signal and
+      not on the lower. This figure shows two signals over the respective
+      thresholds. The blue lines show where the threshold should be: in this
+      case only signal ABOVE the threshold value trigger acquisition. The red
+      lines show where the threshold actually is: in this case only signals
+      BELOW the threshold value trigger acquisition.}\label{threshold-bug}
   \end{figure}
-  The discriminator output is used to generate the hold-and-track on
-  the 36 channels. The threshold is common to the 36 channels, given
-  by a 10 bit DAC with a subsequent 4 bit fine tuning per channel.
-\item The discriminator output is also used to store the value of a
-  300ns ramp in a dedicated analogue memory to provide time
-  information with an accuracy of 100 ps.
-\item A 12 bit Wilkinson ADC is used to digitize the data at the end
-  of the acquisition period.
+  The discriminator output is used to generate the hold-and-track on the 36
+  channels. The threshold is common to the 36 channels, given by a 10 bit DAC
+  with a subsequent 4 bit fine tuning per channel.
+\item The discriminator output is also used to store the value of a 300ns ramp
+  in a dedicated analogue memory to provide time information with an accuracy of
+  100 ps.
+\item A 12 bit Wilkinson ADC is used to digitize the data at the end of the
+  acquisition period.
 \end{itemize}
-The digital part is complex as it must handle the SCA write and read
-pointers, the ADC conversion, the data storage in a RAM and the
-readout process.
+The digital part is complex as it must handle the SCA write and read pointers,
+the ADC conversion, the data storage in a RAM and the readout process.
 
-The chip has been extensively tested by many groups. The first series
-of tests has been mostly devoted to characterizing the analog
-performance, which meets the design specifications.
+The chip has been extensively tested by many groups. The first series of tests
+has been mostly devoted to characterizing the analog performance, which meets
+the design specifications.
 
-\subsection{ASU}
-The Active Sensor Unit (ASU) board is just the name a PCB board
-containing the SPIROC2D chip. It is basically an adapter to connect
-the chip to the MPPCs and to the rest of the DAQ system. The ASUs can
-be daisy-chained together until a maximum of 40 units (4 rows of 5 ASUs)  for every
-DIF as can be seen in Figure~\ref{daisy-chain}.
-\begin{figure}[H]
+\subsection{ASU}\label{sec:ASU}
+\begin{figure}[ht]
+  \centering \includegraphics[width=0.8\linewidth, frame]{ASU}
+  \caption{Active Sensor Unit (ASU) board}
+\end{figure}
+Active Sensor Unit (ASU) board is the name of the PCB board containing the
+SPIROC2D chip. It is basically an adapter to connect the SPIROC chip to the
+MPPCs and to the rest of the DAQ system. The ASUs can be daisy-chained together
+until a maximum of 40 units (4 rows of 5 ASUs) for every DIF, as can be seen in
+Figure~\ref{daisy-chain}.
+\begin{figure}[ht]
+  \centering \includegraphics[width=0.7\linewidth]{daisy-chain}
+  \caption{Schematic of ASU daisy chain}\label{daisy-chain}
+\end{figure}
+The jumpers of the last ASU of every row must be set as shown in
+Figures~\ref{fig:ASU-with-jumpers},~\ref{fig:ASU-without-jumpers}
+and~\ref{ASU-daisy-chain} to reflect the signal back to the interface.
+\begin{figure}[ht]
   \centering
-    \includegraphics[width=0.7\linewidth]{daisy-chain}
-    \caption{Schematic of ASU daisy chain}\label{daisy-chain}
-  \end{figure}
-In Figure TO-DO it is shown a regular ASU board that IS NOT the last
-one of a row.
-TO-ADD-FIGURE
-The jumpers of the last ASU of every row must be set as shown if
-Figure TO-DO to be able to revert the signal back to the interfaces.
-TO-ADD-FIGURE
+  \begin{minipage}{0.5\linewidth}
+    \centering \includegraphics[width=0.98\linewidth,frame]{ASU-with-jumpers}
+    \caption{ASU with jumpers}\label{fig:ASU-with-jumpers}
+  \end{minipage}%
+  \begin{minipage}{0.5\linewidth}
+    \centering \includegraphics[width=0.98\linewidth,frame]{ASU-without-jumpers}
+    \caption{ASU without jumpers}\label{fig:ASU-without-jumpers}
+  \end{minipage}
+\end{figure}
+\begin{figure}[ht]
+  \centering \includegraphics[width=0.5\linewidth, frame]{ASU-daisy-chain}
+  \caption{How to daisy chain and jumper the last ASU of the row.}%
+  \label{ASU-daisy-chain}
+\end{figure}
+
+Moreover, pay attention when you connect the ASUs to the interface because it is
+not as straightforward as it seems. As can be seen in
+Figure~\ref{fig:ASU-Interface1}, it can happen that the cables cross. Notice
+also that the bump in the cable have to correspond to the silkscreen prints on
+the circuit. Anyway, you can refer to table~\ref{tab:ASU-IF} for the ASU-IF
+connections.
+\begin{table}[H]
+  \centering \bgroup
+  \def\arraystretch{1.5}% 1 is the default, change whatever you need
+  \begin{tabular}{|c|c|c|c|c|}
+    \hline
+    & \textbf{ASU 1} & \textbf{ASU 2} & \textbf{ASU 3} & \textbf{ASU 4} \\
+    \hline
+    \textbf{ASU connector} & J1 J2 & J1 J2 & J1 J2 & J1 J2  \\
+    \hline
+    \textbf{IF connector} & J2 J5 & ? & ? & ?  \\ % chktex-file 26
+    \hline
+  \end{tabular}
+  \egroup
+  \caption{ASU - Interface connections}\label{tab:ASU-IF}
+\end{table}
+\begin{figure}[ht]
+  \centering
+  \begin{minipage}{0.4\linewidth}
+    \centering \includegraphics[width=0.9\linewidth,frame]{ASU-Interface1}
+    \caption{Pictures the flat cables that connect an ASU to its
+      Interface}\label{fig:ASU-Interface1}
+  \end{minipage}%
+  \begin{minipage}{0.5\linewidth}
+    \centering \includegraphics[width=0.9\linewidth,frame]{ASU-Interface2}
+    \caption{Close view of the connectors}\label{fig:ASU-Interface2}
+  \end{minipage}
+\end{figure}
+
   
 \section{Interface}
+\begin{figure}[H]
+  \centering
+    \includegraphics[width=0.8\linewidth, frame]{Interface}
+    \caption{Interface (before buffer addition)}
+  \end{figure}
 This board has no important function by itself. It is just a sort of
 adapter to connect all the ASUs to the DIF, to route the High Voltage
 to the MPPCs (through the SPIROC2C chip) and to route the Low Voltage
@@ -437,9 +501,10 @@ such a cumbersome manner even if I want to. Anyway \dots
   coming off J2, J6, J8 and J10. The order is not relevant. Of course,
   in the case of the SideMRD, only one connection is needed (for
   example J2).
-  \begin{figure}[H]
+  \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.6\linewidth]{connection_flat_cable}%
+    \includegraphics[width=0.6\linewidth]{connection_flat_cable}
+    \caption{How to connect the \#13 wire to the buffer.}%
     \label{connection_flat_cable}
   \end{figure}
 \item Connect wire number 50 of the flat cable (it is white in our
@@ -452,7 +517,7 @@ such a cumbersome manner even if I want to. Anyway \dots
   ``ASU end'' of the wire to the DVD pin in a similar way as shown in
   Figure~\ref{connection_flat_cable} for the case of cable 13.
 \item The final result should look more or less like this:
-  \begin{figure}[H]
+  \begin{figure}[ht]
     \centering \includegraphics[frame,width=0.9\linewidth]{fixed-interface}
     \caption{Final result. Notice that the ground wire coming from
       wire 50 of the flat cable is ambiguously red and not black as it
@@ -472,17 +537,14 @@ pins connector to a vertical wire-to-board socket that looks like
 this:
 \begin{figure}[H]
 \centering
-\begin{minipage}{0.2\linewidth}
+\begin{minipage}{0.15\linewidth}
   \centering
   \includegraphics[width=\linewidth,frame]{low-vol-socket1}
 \end{minipage}%
-\begin{minipage}{0.8\linewidth}
+\begin{minipage}{0.6\linewidth}
   \centering
   \includegraphics[width=0.9\linewidth,frame]{low-vol-socket2}
 \end{minipage}
-%\par
-%\medskip
-%\noindent
 \caption{Vertical wire-to-board 5-pins socket on the Interface board
   for the Low Voltage connection}\label{low-vol-socket}
 \end{figure}
@@ -501,16 +563,34 @@ connected to a 5V power supply. The power supply should be able to
 generate at least TO-DO Amperes of current.
   
 \section{DIF}
-I have not much to add about the DIF. It converts the signal from the
-ASUs into HDMI and sends it to the GDCC. It also controls the
-synchronization and reset of the slow clock (BCID). Until present
-there were many issues related to the slow-clock reset and
-synchronization, all of which have been luckily been solved by a DIF
-firmware upgrade. To know more about the DIF please contact Matsushita
-Kouhei (Tokyo University): he was the one that tested the new
-firmware.
+I have not much to add about the DIF. It converts the signal from the ASUs into
+HDMI and sends it to the GDCC. It also controls the synchronization and reset of
+the slow clock (BCID). Until present there were many issues related to the
+slow-clock reset and synchronization, all of which have been luckily been solved
+by a DIF firmware upgrade. To know more about the DIF please contact Matsushita
+Kouhei (Tokyo University): he was the one that tested the new firmware.
 
+Remember to note down the port number (Figure~\ref{fig:GDCC-front-view}) on the
+GDCC side that you connect each DIF to, because you will have to insert that
+number in the configuration file TO-DO.
+\begin{figure}[H]
+   \centering  
+  \begin{minipage}{0.2\linewidth}
+  \centering \includegraphics[width=0.9\linewidth, frame]{GDCC-front-view}
+  \caption{GDCC front view}\label{fig:GDCC-front-view}
+  \end{minipage}%
+  \begin{minipage}{0.7\linewidth}
+  \centering \includegraphics[width=0.9\linewidth, frame]{DIF}
+  \caption{Detector InterFace (DIF)}
+  \end{minipage}
+\end{figure}
+  
 \section{GDCC}
+\begin{figure}[ht]
+  \centering
+    \includegraphics[width=0.7\linewidth, frame]{GDCC}
+    \caption{Gigabit Data Concentrator Card (GDCC) or Clock and Control Card (CCC)}
+  \end{figure}
 I have not much to add in addition to what is already in literature
 quoted in Section~\ref{sec:overview}. This is the board that I know
 the least about, just because, fortunately, it just works and has
@@ -528,6 +608,73 @@ GDCC must necessarily be located on the same physical LAN network as
 the DAQ PC.
 
 \section{CCC}
+CCC
+
+\subsection{How to convert a GDCC into a CCC}
+\epigraph{Do you know how the Orcs first came into being? They were elves once,
+  taken by the dark powers. Tortured and mutilated: a ruined and terrible form
+  of life.}{The Lords of the Rings} All the CCC boards are produced as GDCC and
+then converted in CCC by flashing a new firmware and slightly modifying the
+printed board. The modification is not so complex and with a minimum effort can
+be done by hand if one has the right tools.
+
+To flash the firmware you need a Xilinx programmer like this: TO-DO
+
+Once the firmware has been flashed it is time to modify the printed circuit. You
+only need to short the R28 and R29 resistors by inserting two $0\Omega$ resistor
+in the appropriate pins.
+\begin{figure}[ht]
+  \centering \includegraphics[width=0.5\linewidth,frame]{GDCC-CCC1}
+  \caption{The position of the R28 and R29 resistors on the board.}
+\end{figure}
+\begin{figure}[ht]
+  \centering \includegraphics[width=0.8\linewidth]{GDCC-CCC2}
+\end{figure}
+You can solder the resistors with a traditional solder iron or with a hot air
+gun. In any case you need at least two $0\Omega$ resistors of size 1608 (1.6 mm
+× 0.8 mm). You can find them on the Japanese RS web-shop under the TS number
+``631-5667''. The full description is:
+\begin{itemize}
+\item \begin{CJK}{UTF8}{min}KOA 厚膜チップ抵抗器,ジャンパーチップ抵抗器, 1608サイ
+    ズ, $0\Omega$, $\pm
+    0$ \\
+    RS品番 631-5667 メーカー型番 RK73Z1JTTD メーカー/ブランド名 KOA\end{CJK}
+\item KOA thick-film resistor, jumper-chip resistor, size 1608, $0\Omega$, $\pm
+  0$ \\
+  RS number 631-5667 maker number RK73Z1JTTD maker/brand KOA
+\end{itemize}
+Anyway is the maker not important as long as the value and size are correct.
+
+In the case of
+\begin{itemize}
+\item iron soldering you will also need:
+  \begin{itemize}
+  \item solder (remember that lead is poisonous for all life forms including
+    you)
+  \item tweezers
+    (\href{https://www.monotaro.com/p/0840/4873/?displayId=5}{monotaro number
+      TSP-26})
+  \item flux (\href{https://www.monotaro.com/p/3952/8833/?displayId=5}{monotaro
+      number FS20001})
+  \item flux remover
+    (\href{https://www.monotaro.com/p/6215/1382/?displayId=5}{monotaro number
+      BS-W20B})
+  \end{itemize}
+\item hot air gun soldering
+  (\href{https://www.monotaro.com/p/4893/0954/?displayId=5}{monotaro number
+    FR810B-81}) you will also need:
+  \begin{itemize}
+  \item solder paste (it already contains flux)
+    (\href{https://www.monotaro.com/p/1001/3097/?displayId=5}{monotaro number
+      SMXB05})
+  \item tweezers
+  \item flux remover
+  \item heat resistant tape
+    (\href{https://www.monotaro.com/p/5638/8526/?displayId=5}{monotaro number
+      15})
+  \end{itemize}
+\end{itemize}
+
 \section{ZED board}
 \section{Low and High Voltage PS}
 \section{Temperature Monitors}
@@ -728,8 +875,9 @@ in almost every real-world scenario.
 
 For the developers and more experienced users let's start by taking a
 look at the graph~\ref{fig:acq-server}:
-\begin{figure}
-  \includegraphics[frame,width=\linewidth]{acq_server.doc.png}
+\begin{figure}[ht]
+  \centering
+  \includegraphics[frame,width=0.8\linewidth]{acq_server.doc.png}
   \caption{Pyrame State Machine}\label{fig:acq-server}
 \end{figure}
 I will only focus on the WAGASCI case. All the configuration regarding
@@ -960,7 +1108,8 @@ TO-DO
 \item ASU\_PORT=12006
 \end{itemize}
 
-\chapter{ROOT 6}
+\chapter{Additional Software}
+\section{ROOT 6}
 ROOT is a modular scientific software framework. It provides all the
 functionalities needed to deal with big data processing, statistical
 analysis, visualization and storage. It is mainly written in C++ but
@@ -981,7 +1130,7 @@ are capable of that.
 This chapter is tailored towards Ubuntu 18.04 but it should be the
 same for any other Linux distribution with some minor modifications.
 
-\section{Preliminaries} First install all the packages listed in
+\subsection{Preliminaries} First install all the packages listed in
 section~\ref{packages}. Again, some of them may not be strictly needed
 but cherry-picking which package is needed and which not could be very
 time consuming. If you have very strict space limitations and you are
@@ -999,7 +1148,7 @@ The output should be
       [...]
 \end{lstlisting}
 
-\section{ROOT Installation}
+\subsection{ROOT Installation}
 
 Then follow the step~\ref{root-1} of section~\ref{root5}. Instead of step~\ref{root-2}, type
 \begin{lstlisting}
@@ -1023,7 +1172,7 @@ The following steps are the very same of section~\ref{root5} where in
 place of \cleanstyle{5-34-00-patches} you just have to type
 \cleanstyle{6-14-02}.
 
-\chapter{NEUT 5.4.0}
+\section{NEUT 5.4.0}
 NEUT is a neutrino interaction simulation program library that has
 been developed for the studies of the atmospheric neutrino and the
 accelerator neutrinos. In this guide it is described how to compile
@@ -1043,10 +1192,10 @@ detail. This means that the guide could appear boring and
 over-repetitive to a reader well-versed in Linux software compilation
 and programming and I preventively apologize for that.
 
-\section{List of NEUT dependencies}\label{dep}
+\subsection{List of NEUT dependencies}\label{dep}
 To compile NEUT, three main dependencies are needed:
 \begin{itemize}
-\item \hyperref[]{\textbf{CERNLIB 2005}}\\
+\item \hyperref[sec:cernlib-2005]{\textbf{CERNLIB 2005}}\\
   CERNLIB 2005 is a quite old version of \cleanstyle{cernlib}, its
   latest release being dated 2012. Unsurprisingly it is quite tricky
   to compile. This is why I have included in the present guide a
@@ -1066,7 +1215,7 @@ To compile NEUT, three main dependencies are needed:
   \href{https://github.com/root-project/root/tree/v5-34-00-patches?files=1}{GitHub
     branch} is March 2018) and I have chosen that for my personal
   installation.
-\item \hyperref[]{\textbf{Fortran compilers}} (\cleanstyle{gfortran}
+\item \hyperref[compiler]{\textbf{Fortran compilers}} (\cleanstyle{gfortran}
   and
   \cleanstyle{g77})\\
   The old fortran compiler \cleanstyle{g77} is not maintained anymore
@@ -1076,14 +1225,14 @@ To compile NEUT, three main dependencies are needed:
   nonstandard way as it will be shown in the following.
 \end{itemize}
 
-\section{NEUT compatibility}
+\subsection{NEUT compatibility}
 NEUT officially supports only CentOS 7, but this doesn't mean that it
 cannot be run without issues on other Linux OSes. I will introduce
 here 3 OSes that I have successfully compiled NEUT onto: CentOS 7,
 Ubuntu 17.10 and Ubuntu 18.04. I will show how to compile NEUT only on
 Ubuntu 18.04 64 bit because that is the most delicate case and because
 Ubuntu 18.04 is the latest Ubuntu LST (Long Term Support) release.
-\subsection{CentOS 7 - TO DO}
+\subsubsection{CentOS 7 - TO DO}
 In May 2018 Hayato Yoshinari-san, who I think is also the main
 developer of \href{https://inspirehep.net/record/844435?ln=en}{NEUT},
 organized a small course about NEUT.\ Since the course was in Japanese
@@ -1119,7 +1268,7 @@ some relevant details about it:
   \end{tabular}
 \end{center}
 
-\subsection{Ubuntu 18.04}
+\subsubsection{Ubuntu 18.04}
 With the aim of writing the present guide, I wanted to test
 the NEUT compilation on a fresh install. I have chosen Ubuntu 18.04
 because it is the latest Ubuntu LTS version, so in the following I
@@ -1148,8 +1297,8 @@ in subsection~\ref{compiler}.
   \end{tabular}
 \end{center}
 
-\section{Compile NEUT and its dependencies}
-\subsection{Preliminaries}
+\subsection{Compile NEUT and its dependencies}
+\subsubsection{Preliminaries}
 \begin{enumerate}
 \item Open a terminal or a shell. Ideally you should never close this
   shell from now until last step. If you need to close it nothing bad
@@ -1173,7 +1322,7 @@ in subsection~\ref{compiler}.
 \end{lstlisting}
 \end{enumerate}
 
-\subsection{Compilers}\label{compiler}
+\subsubsection{Compilers}\label{compiler}
 If you try to compile NEUT with compilers newer that 4.8, everything
 will still compile fine but you will get the
 following error on NEUT execution time:
@@ -1217,7 +1366,7 @@ and \cleanstyle{7} for the 7.x compilers.
 Be sure to run the script and switch to the 4.8 compiler before
 starting the compilation of ROOT, CERNLIB and NEUT.\@ 
 
-\subsection{ROOT 5}\label{root5}
+\subsubsection{ROOT 5}\label{root5}
 As already pointed out in the introduction, at the time of writing,
 \textbf{NEUT 5.4.0 is only compatible with ROOT 5}. Please refer to
 section~\ref{dep} for further details about this ``issue''.  Here I
@@ -1341,7 +1490,7 @@ freely taken from the following pages:
   fonts). Then you can ROOT with the command \cleanstyle{root}.
 \end{enumerate}
 
-\subsection{CERNLIB 2005}
+\subsubsection{CERNLIB 2005}\label{sec:cernlib-2005}
 The following procedure was freely taken from the three reference web
 pages:
 \begin{itemize}
@@ -1472,7 +1621,7 @@ wget https://www.dropbox.com/s/n7n1wiivn1noets/patchy4.tar.gz
 \end{lstlisting}
 \end{enumerate}
 
-\section{NEUT 5.4.0}
+\subsection{NEUT 5.4.0}
 \begin{enumerate}[resume]
 \item If you are continuing from the same terminal as the previous
   section, you don't need this step. Otherwise open the terminal and
@@ -1772,4 +1921,5 @@ Register.
 
 %%% Local Variables:
 %%% TeX-master: t
+%%% TeX-engine: pdftex
 %%% End:
