@@ -361,90 +361,91 @@ connections.
   
 \section{Interface}
 \begin{figure}[H]
-  \centering
-    \includegraphics[width=0.8\linewidth, frame]{Interface}
-    \caption{Interface (before buffer addition)}
-  \end{figure}
-This board has no important function by itself. It is just a sort of
-adapter to connect all the ASUs to the DIF, to route the High Voltage
-to the MPPCs (through the SPIROC2C chip) and to route the Low Voltage
-to the SPIROC2D chip itself and to the DIF. Despite being the most
-trivial board of the system it is the component that gave more problems
-in the past.
+  \centering \includegraphics[width=0.8\linewidth, frame]{Interface}
+  \caption{Interface (before buffer addition)}\label{fig:Interface}
+\end{figure}
+This board has no important function by itself. It is just a sort of adapter to
+connect all the ASUs to the DIF, to route the High Voltage to the MPPCs (through
+the SPIROC2C chip) and to route the Low Voltage to the SPIROC2D chip itself and
+to the DIF. Despite being the most trivial board of the system it is the
+component that gave more problems in the past.
 
-The connectors are quite fragile and I counted at least 5 boards
-broken when disconnecting some cables (including one by myself). In
-particular take extra care when connecting-disconnecting the DIF and
-the Low Voltage.
+The connectors are quite fragile and I counted at least 5 boards broken when
+disconnecting some cables (including one by myself). In particular take extra
+care when connecting-disconnecting the DIF and the Low Voltage.
 
-Moreover, as can be read in Tamura Riku's thesis (after correcting typos):
+The High voltage must be connected to the only LEMO 00 female connector that can
+be seen on the right of the DIF in Figure~\ref{fixed-interface}. Where to
+connect the Low Voltage cable is shown in Figure~\ref{low-vol-pin-out} and in
+Section~\ref{sec:how-make-low-voltage-cable}.
 
-\textit{[\dots] in order to check the correct operation of
-  the full setup, the daisy chain configuration is firstly tested. The
-  test is done by increasing the number of daisy-chained ASU boards
-  one by one. Up to about 10 boards, the daisy chain is correctly
-  configured but at around 10 boards the configuration starts to
-  fail. After several tests with different configurations, it appeared
-  that this is due to the attenuation and reflection of the bunch
-  crossing clock (BCID) when it travels through the chain: the
-  signals, including the bunch crossing clock, are serially
-  transported through the daisy chain so the length that they need to
-  travel depends on the number of connected ASU boards. The total
-  capacitance of the daisy chain depends on the number of connected
-  ASU boards, too. This creates a mismatch of impedance between the
-  endpoints and some DAQ signals are badly affected. In practice most
-  of the DAQ signals are not so affected but it seems that the bunch
-  crossing clock is strongly affected. The whole DAQ acquisition phase
-  is synchronized to the bunch crossing clock so this is a very
-  critical issue.}
+The Interface shown if Figure~\ref{fig:Interface} is just a prototype (before
+the patch described in Section~\ref{sec:how-patch-interface} is applied). The
+actual Interface board may look different.
 
-\textit{Fortunately, this problem can be fixed by ``patching'' the
-  bunch crossing clock line. To prevent the attenuation of bunch
-  crossing clock and match the impedance a 4ch buffer,
-  CDCLVC1104\cite{Texas-Instruments:CDCLVC11xx}, is applied to the
-  bunch crossing clock line as shown in Figure TO-DO. This buffer is a
-  highly performing and fast responding one. The delay it adds to the
-  BCID is of 0.8-2ns, which is less than 1\% of the period of bunch
-  crossing clock, so the effect on the timing measurement due to the
-  BCID is negligible. This patch is tested to work fine and the daisy
-  chain is configured correctly even with the full setup (20
-  ASUs). [\dots]}
+\subsection{How to patch the interface}\label{sec:how-patch-interface}
+As can be read in Tamura Riku's thesis (after correcting some typos):
 
-Long story short, we have to patch every interface with that chip if
-we want to daisy-chain more than 10 ASUs. Just to be on the safe side,
-all the interface boards, even if connected to less than 10 ASUs, were
-fixed with the following procedure.
+\textit{[\dots] in order to check the correct operation of the full setup, the
+  daisy chain configuration is firstly tested. The test is done by increasing
+  the number of daisy-chained ASU boards one by one. Up to about 10 boards, the
+  daisy chain is correctly configured but at around 10 boards the configuration
+  starts to fail. After several tests with different configurations, it appeared
+  that this is due to the attenuation and reflection of the bunch crossing clock
+  (BCID) when it travels through the chain: the signals, including the bunch
+  crossing clock, are serially transported through the daisy chain so the length
+  that they need to travel depends on the number of connected ASU boards. The
+  total capacitance of the daisy chain depends on the number of connected ASU
+  boards, too. This creates a mismatch of impedance between the endpoints and
+  some DAQ signals are badly affected. In practice most of the DAQ signals are
+  not so affected but it seems that the bunch crossing clock is strongly
+  affected. The whole DAQ acquisition phase is synchronized to the bunch
+  crossing clock so this is a very critical issue.}
 
-\subsection{How to fix the interface}
-Here I will show how to concretely fix the interface. I came to know
-about this procedure by reading two pdf files that were sent to YNU
-from I don't know where. I must admit that until now they hold the
-record for being the most unintelligible piece of paper that I have
-ever read. No matter how much I strove, I think that I could never write in
-such a cumbersome manner even if I want to. Anyway \dots
+\textit{Fortunately, this problem can be fixed by ``patching'' the bunch
+  crossing clock line. To prevent the attenuation of bunch crossing clock and
+  match the impedance a 4ch buffer,
+  CDCLVC1104\cite{Texas-Instruments:CDCLVC11xx}, is applied to the bunch
+  crossing clock line as shown in Figure TO-DO. This buffer is a highly
+  performing and fast responding one. The delay it adds to the BCID is of
+  0.8-2ns, which is less than 1\% of the period of bunch crossing clock, so the
+  effect on the timing measurement due to the BCID is negligible. This patch is
+  tested to work fine and the daisy chain is configured correctly even with the
+  full setup (20 ASUs). [\dots]}
+
+Long story short, we have to patch every interface with that chip if we want to
+daisy-chain more than 10 ASUs. Just to be on the safe side, all the interface
+boards, even if connected to less than 10 ASUs, were fixed with the following
+procedure.
+
+Here I will show how to concretely fix the interface. I came to know about this
+procedure by reading two pdf files that were sent to YNU from I don't know
+where. I must admit that until now they hold the record for being the most
+unintelligible piece of paper that I have ever read. No matter how much I
+strove, I think that I could never write in such a cumbersome manner even if I
+want to. Anyway \dots
 \begin{enumerate}
-\item First solder the CDCLVC1104 chip on the base and glue it on the
-  board (any empty space on the interface is good). You can use a
-  different support (the white piece of plastic in the pictures) and
-  base (the small PCB with 10 holes on each side) if you want.
+\item First solder the CDCLVC1104 chip on the base and glue it on the board (any
+  empty space on the interface is good) as shown in Figure~\ref{buffer}. You can
+  use a different support (the white piece of plastic) and base
+  (the small PCB with 10 holes on each side) if you want.
   \begin{figure}[H]
     \centering \includegraphics[frame,width=.3\textwidth]{support}\hfill
     \includegraphics[frame,width=.3\textwidth]{base}\hfill
     \includegraphics[frame,width=.3\textwidth]{base-glued}
-    \caption{PCB Base (in the middle) glued to the interface board
-      using a plastic support (on the left). The buffer chip must be
-      soldered on that base (not shown in the pictures, yet). You can
-      solder the buffer chip in any position on the base as long as it
-      is soldered properly.}\label{buffer}
+    \caption{PCB Base (in the middle) glued to the interface board using a
+      plastic support (on the left). The buffer chip must be soldered on that
+      base (not shown in the pictures, yet). You can solder the buffer chip in
+      any position on the base as long as it is soldered
+      properly.}\label{buffer}
   \end{figure}
-\item Then take a 50 pins flat cable (that you are then going to
-  connect to the J2 connector). Cut in the middle the wires number 13,
-  49 and 50 (SR\_CK\_BUF, TRIG\_EXT\_N and TRIG\_EXT\_P
-  respectively). Refer to Figure~\ref{J2} for the flat cable
-  pin-out. Strip the ``ASU end'' of these wires. By ASU end I mean the
-  end that is not to be connected to the interface but to the ASU. If
-  needed do the same for the other flat cables coming out the
-  connectors J6, J8 and J10.
+\item Then take a 50 pins flat cable (that you are then going to connect to the
+  J2 connector). Cut in the middle the wires number 13, 49 and 50 (SR\_CK\_BUF,
+  TRIG\_EXT\_N and TRIG\_EXT\_P respectively). Refer to Figure~\ref{J2} for the
+  flat cable pin-out. Strip the ``ASU end'' of these wires. By ASU end I mean
+  the end that is not to be connected to the interface but to the ASU. If needed
+  do the same for the other flat cables coming out the connectors J6, J8 and
+  J10.
   \begin{figure}[H]
     \centering \includegraphics[frame,width=0.7\linewidth]{J2}
     \caption{J2 connector pin-out}\label{J2}
@@ -455,8 +456,7 @@ such a cumbersome manner even if I want to. Anyway \dots
     \caption{CDCLVC1104 chip pin-out}\label{desolder}
   \end{figure}
 \item Referring to Figures~\ref{interface-connections}
-  and~\ref{buffer-blueprint}, connect with some wires the pins in this
-  way:
+  and~\ref{buffer-blueprint}, connect with some wires the pins in this way:
   \begin{table}[H]
     \centering \bgroup
     \def\arraystretch{1.5}% 1 is the default, change whatever you need
@@ -473,7 +473,7 @@ such a cumbersome manner even if I want to. Anyway \dots
     \end{tabular}
     \egroup
     \caption{Fast command packet format}
-  \end{table} 
+  \end{table}
   \begin{figure}[H]
     \centering \includegraphics[width=0.7\linewidth]{buffer-blueprint}
     \caption{CDCLVC1104 chip pin-out}\label{buffer-blueprint}
@@ -485,90 +485,85 @@ such a cumbersome manner even if I want to. Anyway \dots
     \includegraphics[frame,width=.3\textwidth]{ground}
     \caption{Interface connections}\label{interface-connections}
   \end{figure}
-  I am sorry but in the document that I was given there is no
-  schematics regarding the holes around the M9 chip, so we had to
-  solder referring only to the attached pictures.
-\item (Optional but recommended) Solder a capacitor of 100nf to
-  decouple power and ground between the pins 6 VDD and 4 GRD of the
-  buffer. It is not shown in the pictures.
+  I am sorry but in the document that I was given there is no schematics
+  regarding the holes around the M9 chip, so we had to solder referring only to
+  the attached pictures.
+\item (Optional but recommended) Solder a capacitor of 100nf to decouple power
+  and ground between the pins 6 VDD and 4 GRD of the buffer. It is not shown in
+  the pictures.
 \item Now connect the interface holes around the M9 chip as shown in
-  Figures~\ref{interface-connections} (blue cable). In the document I
-  was given those are called pin number 1 and 7. Anyway, as I said,
-  without the schematics those numbers are meaningless. Sometimes I
-  wonder if Physicists are really so smart as they think to be.
+  Figures~\ref{interface-connections} (blue cable). In the document I was given
+  those are called pin number 1 and 7. Anyway, as I said, without the schematics
+  those numbers are meaningless. Sometimes I wonder if Physicists are really so
+  smart as they think to be.
 \item Pins 3,5,7,8 of the buffer chip represent the output of the
-  buffer. Connect each pin to the wire number 13 of the flat cables
-  coming off J2, J6, J8 and J10. The order is not relevant. Of course,
-  in the case of the SideMRD, only one connection is needed (for
-  example J2).
-  \begin{figure}[ht]
-    \centering
-    \includegraphics[width=0.6\linewidth]{connection_flat_cable}
+  buffer. Connect each pin to the wire number 13 of the flat cables coming off
+  J2, J6, J8 and J10. The order is not relevant. Of course, in the case of the
+  SideMRD, only one connection is needed (for example J2). Refer to
+  Figure~\ref{connection_flat_cable} for a visual explanation.
+  \begin{figure}[H]
+    \centering \includegraphics[width=0.6\linewidth]{connection_flat_cable}
     \caption{How to connect the \#13 wire to the buffer.}%
     \label{connection_flat_cable}
   \end{figure}
-\item Connect wire number 50 of the flat cable (it is white in our
-  case) to any ground pin on the interface board. You have to connect
-  the ``ASU end'' of the wire to ground in a similar way as shown in
-  Figure~\ref{connection_flat_cable} for the case of cable 13.
-\item Connect wire number 49 of the flat cable (it is blue in our
-  case) to the DVD pin on the interface board. The DVD pin is located
-  near the M9 chip that you just desoldered. You have to connect the
-  ``ASU end'' of the wire to the DVD pin in a similar way as shown in
-  Figure~\ref{connection_flat_cable} for the case of cable 13.
-\item The final result should look more or less like this:
+\item Connect wire number 50 of the flat cable (it is white in our case) to any
+  ground pin on the interface board. You have to connect the ``ASU end'' of the
+  wire to ground in a similar way as shown in Figure~\ref{connection_flat_cable}
+  for the case of cable 13.
+\item Connect wire number 49 of the flat cable (it is blue in our case) to the
+  DVD pin on the interface board. The DVD pin is located near the M9 chip that
+  you just desoldered. You have to connect the ``ASU end'' of the wire to the
+  DVD pin in a similar way as shown in Figure~\ref{connection_flat_cable} for
+  the case of cable 13.
+\item The final result should look more or less like
+  Figure~\ref{fixed-interface}.
   \begin{figure}[ht]
     \centering \includegraphics[frame,width=0.9\linewidth]{fixed-interface}
-    \caption{Final result. Notice that the ground wire coming from
-      wire 50 of the flat cable is ambiguously red and not black as it
-      should be. The green wire is coming off from wire number 49 and
-      is connected to the DVD pin on the Interface. In total there are
-      three yellow output wires coming off the buffer chip: of them
-      only one is actually used.}\label{fixed-interface}
+    \caption{Final result. Notice that the ground wire coming from wire 50 of
+      the flat cable is ambiguously red and not black as it should be. The green
+      wire is coming off from wire number 49 and is connected to the DVD pin on
+      the Interface. In total there are three yellow output wires coming off the
+      buffer chip but only one is actually used.}\label{fixed-interface}
   \end{figure}
 \end{enumerate}
 
-\subsection{How to make a Low Voltage cable}
-For bench-testing purposes you may need to make your own Low Voltage
-cable to power the Interface and all the other boards connected to it.
+\subsection{How to make a Low Voltage cable}\label{sec:how-make-low-voltage-cable}
+For bench-testing purposes you may need to make your own Low Voltage cable to
+power the Interface and all the other boards connected to it.
 
-The Low Voltage cable must be connected to the interface using a 5
-pins connector to a vertical wire-to-board socket that looks like
-this:
+The Low Voltage cable must be connected to the interface using a 5 pins
+connector to a vertical wire-to-board socket that looks like this:
 \begin{figure}[H]
-\centering
-\begin{minipage}{0.15\linewidth}
   \centering
-  \includegraphics[width=\linewidth,frame]{low-vol-socket1}
-\end{minipage}%
-\begin{minipage}{0.6\linewidth}
-  \centering
-  \includegraphics[width=0.9\linewidth,frame]{low-vol-socket2}
-\end{minipage}
-\caption{Vertical wire-to-board 5-pins socket on the Interface board
-  for the Low Voltage connection}\label{low-vol-socket}
+  \begin{minipage}{0.15\linewidth}
+    \centering \includegraphics[width=\linewidth,frame]{low-vol-socket1}
+  \end{minipage}%
+  \begin{minipage}{0.6\linewidth}
+    \centering \includegraphics[width=0.9\linewidth,frame]{low-vol-socket2}
+  \end{minipage}
+  \caption{Vertical wire-to-board 5-pins socket on the Interface board for the
+    Low Voltage connection}\label{low-vol-socket}
 \end{figure}
-To make the cable just buy a male connector (TO-DO insert link) and
-connect the pins following the pin-out of
-Figure~\ref{low-vol-pin-out}.
+To make the cable just buy a male connector (TO-DO insert link) and connect the
+pins following the pin-out of Figure~\ref{low-vol-pin-out}.
 \begin{figure}[H]
   \centering \includegraphics[width=0.5\linewidth]{low-vol-pin-out}
-  \caption{Vertical wire-to-board 5-pins socket on the Interface board
-    for the Low Voltage connection}\label{low-vol-pin-out}
+  \caption{Vertical wire-to-board 5-pins socket on the Interface board for the
+    Low Voltage connection}\label{low-vol-pin-out}
 \end{figure}
-The ground wires can be grouped together in a single wire. The 5V
-wires can be grouped together in a single wire, too. The resulting 2
-wires end of the cable can be terminated as you like and then
-connected to a 5V power supply. The power supply should be able to
-generate at least TO-DO Amperes of current.
+The ground wires can be grouped together in a single wire. The 5V wires can be
+grouped together in a single wire, too. The resulting 2 wires end of the cable
+can be terminated as you like and then connected to a 5V power supply. The power
+supply should be able to generate at least TO-DO Amperes of current.
   
 \section{DIF}
-I have not much to add about the DIF. It converts the signal from the ASUs into
-HDMI and sends it to the GDCC. It also controls the synchronization and reset of
-the slow clock (BCID). Until present there were many issues related to the
-slow-clock reset and synchronization, all of which have been luckily been solved
-by a DIF firmware upgrade. To know more about the DIF please contact Matsushita
-Kouhei (Tokyo University): he was the one that tested the new firmware.
+I have not much to say about the Detector InterFace (DIF) board. It converts the
+signal from the ASUs into HDMI and sends it to the GDCC. It also controls the
+synchronization and reset of the slow clock (BCID). Until present there were
+many issues related to the slow-clock reset and synchronization, all of which
+have been luckily solved by a DIF firmware upgrade. To know more about the
+DIF please contact Matsushita Kouhei (Tokyo University): he was the one that
+tested the new firmware. To flash the updated firmware refer to Section TO-DO
 
 Remember to note down the port number (Figure~\ref{fig:GDCC-front-view}) on the
 GDCC side that you connect each DIF to, because you will have to insert that
@@ -584,14 +579,18 @@ number in the configuration file TO-DO.
   \caption{Detector InterFace (DIF)}
   \end{minipage}
 \end{figure}
-  
+
+\subsection{DIF Firmware upgrade}
+
+TO-DO
+
 \section{GDCC}
 \begin{figure}[ht]
   \centering
     \includegraphics[width=0.7\linewidth, frame]{GDCC}
     \caption{Gigabit Data Concentrator Card (GDCC) or Clock and Control Card (CCC)}
   \end{figure}
-I have not much to add in addition to what is already in literature
+I have not much to add in addition to what is already in the literature
 quoted in Section~\ref{sec:overview}. This is the board that I know
 the least about, just because, fortunately, it just works and has
 never given any problem so far.
@@ -600,15 +599,51 @@ Please refer to the literature~\cite{GDCC:2012} or
 Appendix~\ref{sec:gdcc-cheat-sheet} if you want/need to know more
 about the GDCC.
 
-The GDCC is built on standard Ethernet. Communication to and from it
-is done via RAW Ethernet packets. This is why it doesn't need an IP
-address. This way communication between the DAQ PC and the GDCC can be
-faster than if they traveled through the IP layer but, this way, the
-GDCC must necessarily be located on the same physical LAN network as
-the DAQ PC.
+The communication between the PC and GDCC is built on standard
+Ethernet. Communication to and from it is done via RAW Ethernet packets. This is
+why it doesn't need an IP address. This way communication between the DAQ PC and
+the GDCC can be faster than if they traveled through the IP layer but the GDCC
+must necessarily be located on the same physical LAN network as the DAQ PC.
+
+\subsection{How to make a power supply cable}
+The GDCC is build in the standard VME layout. It is meant to be plugged into a
+VME crate slot for power and mechanical stability. As far as I know,
+communication with the VME crate is hardware-ready but not implemented in
+software yet.
+
+In case you don't have a VME crate at hand you can easily fabricate a specific
+power adapter to power up the GDCC and CCC with a standard Power Supply
+Unit. The nominal voltage is DC $+5V$. The PSU must be able to supply at least
+$5A$ of DC current.
+
+For this, you need to find or buy
+\begin{itemize}
+\item 2 VME female connectors (96 way 2.54mm pitch). One for the GDCC and
+  another for the CCC (RS reference number:
+  \href{https://jp.rs-online.com/web/p/din-41612-connectors/0470443/?sra=pstk}{RS
+    470-443}).
+\item A breadboard to solder the connectors and the cables onto (RS reference
+  number in Europe
+  \href{https://uk.rs-online.com/web/p/matrix-boards/4570755/}{RS 457-0755}, RS
+  reference number in Japan
+  \href{https://jp.rs-online.com/web/p/matrix-boards/6647876/?sra=pstk}{RS
+    664-7876}) (single side Matrix board, 2.54 pitch). You need only one boards
+  that you can cut in 2 parts, one for each adapter.
+\item Black and red cable unipolar cable for connections.
+\item Two connectors to connect to the Power Supply (the connector type depends
+  on your Power Supply and your ``taste'').
+\end{itemize}
+
+About the connection, you need to solder the pins A32,B32,C32 together and
+connect these one to a red cable that you will then use for the 5V voltage.
+
+You need to solder the pins A9, A11, A15, A17, A19, B20, B23, C9 together and
+connect these one to a black cable that you will then use for the ground.
+
+TO-DO add pictures and pinout
 
 \section{CCC}
-CCC
+Clock and Control Card (CCC)
 
 \subsection{How to convert a GDCC into a CCC}
 \epigraph{Do you know how the Orcs first came into being? They were elves once,
@@ -632,7 +667,7 @@ in the appropriate pins.
 \end{figure}
 You can solder the resistors with a traditional solder iron or with a hot air
 gun. In any case you need at least two $0\Omega$ resistors of size 1608 (1.6 mm
-× 0.8 mm). You can find them on the Japanese RS web-shop under the TS number
+× 0.8 mm). You can find them on the Japanese RS web-shop under the RS reference number
 ``631-5667''. The full description is:
 \begin{itemize}
 \item \begin{CJK}{UTF8}{min}KOA 厚膜チップ抵抗器,ジャンパーチップ抵抗器, 1608サイ
@@ -643,9 +678,8 @@ gun. In any case you need at least two $0\Omega$ resistors of size 1608 (1.6 mm
   0$ \\
   RS number 631-5667 maker number RK73Z1JTTD maker/brand KOA
 \end{itemize}
-Anyway is the maker not important as long as the value and size are correct.
-
-In the case of
+Anyway, the maker is not important as long as the value and size are correct.
+You can solder the resistor in at least two ways. One is with a soldering conical tip 
 \begin{itemize}
 \item iron soldering you will also need:
   \begin{itemize}
@@ -679,7 +713,7 @@ In the case of
 \section{Low and High Voltage PS}
 \section{Temperature Monitors}
 \section{Water Level monitor}
-
+The USB drive must be formatted with MBR and FAT32.
 \chapter{DAQ software}
 The main software for data acquisition of the WAGASCI experiment is
 called Anpan (Acquisition Networked Program for Accelerated
@@ -1921,5 +1955,4 @@ Register.
 
 %%% Local Variables:
 %%% TeX-master: t
-%%% TeX-engine: pdftex
 %%% End:
