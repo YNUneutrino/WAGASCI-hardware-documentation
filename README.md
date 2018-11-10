@@ -1,4 +1,4 @@
-Last Updated on 2018-10-15 Copyright (C) 2018 Pintaudi Giorgio
+Copyright (C) 2018 Pintaudi Giorgio
 
 # WAGASCI Documentation
 
@@ -49,15 +49,21 @@ working on that.
 I am compiling this tex file with TeX Live 2018 but any other TeX
 distribution should be fitting for the task.
 
-$ latex --version pdfTeX 3.14159265-2.6-1.40.19 (TeX Live 2018)
-kpathsea version 6.3.0 Copyright 2018 Han The Thanh (pdfTeX) et al.
-There is NO warranty.  Redistribution of this software is covered by
-the terms of both the pdfTeX copyright and the Lesser GNU General
-Public License.  For more information about these matters, see the
-file named COPYING and the pdfTeX source.  Primary author of pdfTeX:
-Han The Thanh (pdfTeX) et al.  Compiled with libpng 1.6.34; using
-libpng 1.6.34 Compiled with zlib 1.2.11; using zlib 1.2.11 Compiled
-with xpdf version 4.00
+```
+neo@zion:~$ latex --version
+pdfTeX 3.14159265-2.6-1.40.19 (TeX Live 2018)
+kpathsea version 6.3.0
+Copyright 2018 Han The Thanh (pdfTeX) et al.
+There is NO warranty.  Redistribution of this software is
+covered by the terms of both the pdfTeX copyright and
+the Lesser GNU General Public License.
+For more information about these matters, see the file
+named COPYING and the pdfTeX source.
+Primary author of pdfTeX: Han The Thanh (pdfTeX) et al.
+Compiled with libpng 1.6.34; using libpng 1.6.34
+Compiled with zlib 1.2.11; using zlib 1.2.11
+Compiled with xpdf version 4.00
+```
 
 ## License
 
