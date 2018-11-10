@@ -177,15 +177,21 @@ dispersed through the net. Here I am providing a compilation of all the
 available literature that I could find.
 
 \begin{itemize}
+\item Master Theses about the WAGASCI electronics and DAQ system: Chikuma
+  Naruhiro~\cite{Chikuma:2016}, Tamura Riku~\cite{Tamura:2018}.
+\item Articles about the WAGASCI electronics (but not directly referring to the
+  WAGASCI experiment):~\cite{Gastaldi:2014vaa,Gastaldi:2014oid,GDCC:2012}.
 \item General articles about pre-amplifiers and amplifiers used for Physics
-  measurements~\cite{Hamamatsu:2001,Bertuccio:1996,Lioliou:2015,Ortec} and of
-  course everything about signal processing that you can find in the Knoll
-  book~\cite{Knoll:2010radiation}.
+  measurements~\cite{Hamamatsu:2001,Bertuccio:1996,Lioliou:2015,Ortec} and
+  everything about signal processing that you can find in the Knoll
+  book~\cite{Knoll:2010radiation}. This should be enough to get you started. Of
+  course there is much more online about Physical applications of pre-amplifier
+  and amplifiers.  
 \item Articles and slide shows about the SPIROC
   characterization~\cite{Callier:2008,Callier:2009,Fabbri:2009,%
-    Callier:2013,Callier:2015}
+    Callier:2013,Callier:2015}.
 \item SPIROC manuals and
-  pin-out~\cite{SPIROC2Dpinlist,SPIROC2Ddatasheet,SPIROC:OMEGA}
+  pin-out~\cite{SPIROC2Dpinlist,SPIROC2Ddatasheet,SPIROC:OMEGA}.
 \end{itemize}
 
 \section{SPIROC2D}
@@ -715,12 +721,13 @@ The USB drive must be formatted with MBR and FAT32.
 
 \chapter{DAQ software}
 The main software for data acquisition of the WAGASCI experiment is called Anpan
-(Acquisition Networked Program for Accelerated Neutrinos). It is based on the
-Calicoes software that was used for the Silicium Tungsten Electromagnetic
+(\textbf{Acquisition Networked Program for Accelerated Neutrinos}). It is based
+on the Calicoes software that was used for the Silicium Tungsten Electromagnetic
 Calorimeter (SiW-ECAL) prototype of the future International Linear Collider,
 developed by Frédéric Magniette and Miguel Rubio-Roy. Both Anpan and Calicoes
 are based on the Pyrame framework of which they two similar implementations.
 
+\section{Overview}
 Until Summer 2018, we were using the Calicoes software without almost any
 modification as the data acquisition software for the WAGASCI prototype
 (i.e. Proton Module + WAGASCI water-in detector + Ingrid module).
@@ -769,9 +776,9 @@ works-just-because-it-works. Luckily the Calicoes and Pyrame software is
 adequately documented and with this guide I would like to close the gap between
 users and software even further.
 
-\section{References}
+\subsection{References}
 There are a few published articles about the Pyrame framework. Here I am listing
-all the articles that I could find. These articles are also cited throughout the
+all the articles that I could find. These articles are also cited throughout this
 Documentation in the relevant sections.
 \begin{itemize}
 \item General articles about the ILC Calorimeter DAQ
