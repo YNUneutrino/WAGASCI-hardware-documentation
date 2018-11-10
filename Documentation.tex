@@ -714,6 +714,8 @@ You can solder the resistor in at least two ways. One is with a soldering conica
 \section{Temperature Monitors}
 \section{Water Level monitor}
 The USB drive must be formatted with MBR and FAT32.
+\section{DAQ PC}
+
 \chapter{DAQ software}
 The main software for data acquisition of the WAGASCI experiment is
 called Anpan (Acquisition Networked Program for Accelerated
@@ -728,20 +730,18 @@ any modification as the data acquisition software for the WAGASCI
 prototype (i.e. Proton Module + WAGASCI water-in detector + Ingrid
 module).
 
-Between the end of the WAGASCI prototype commissioning run in Summer
-2018 and the beginning of the WAGASCI Experiment Physics run in April
-2019, I started my Ph.D. at YNU and I decided to further develop and
-improve the WAGASCI DAQ system. So I took the decision (quite
-one-sidedly I have to admit) to change the name of the acquisition
-software and release it under the GPLv3 license.
+Between the end of the WAGASCI prototype commissioning run in Summer 2018 and
+the beginning of the WAGASCI Experiment Physics run in the 2019 spring, I
+started my Ph.D. at YNU and I decided to further develop and improve the WAGASCI
+DAQ system. So I took the decision (quite one-sidedly I have to admit) to change
+the name of the acquisition software from Calicoes to Anpan (Acquisition
+Networked Program for Accelerated Neutrinos), to keep these two implementations
+of the Pyrame framework separated.
 
-It is not clear which license is Calicoes released according
-to. Anyway Pyrame (which is written by the same developers) is
-released under GPLv3 so I assumed that Calicoes is released under the
-same license. This entitles me (Pintaudi Giorgio) to release again a
-modified version of the software under different name but giving due
-credit to the original authors (Frédéric Magniette and Miguel
-Rubio-Roy).
+Since Anpan is based on Calicoes code and Calicoes is proprietary software, I am
+not able to release Anpan publicly. Credit for Anpan and Calicoes goes entirely
+to the original authors (Frédéric Magniette, Miguel Rubio-Roy and Thomas
+Mueller). If I forgot to mention somebody please let me know.
 
 I have chosen that name because wagashi (after which the WAGASCI
 experiment is named) in Japanese means ``traditional sweets'' and
