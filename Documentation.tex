@@ -1,4 +1,4 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 % WAGASCI Hardware and Software Documentation
 % Version 0.1 (7/11/2018)
 % 
@@ -11,26 +11,26 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 
-%-------------------------------LATEX SYNTAX----------------------------------
-%
-%       enter:               \\, \linebreak, \newline
-%       new page:            \newpage
-%       tab:                 \tab
-%       new section:         \section{name} text
-%       new paragraph        \subsection{name} text  (subsub...section{name} for more layers)
-%       %, &, $, _, etc:     (these are latex operators, add a "\" to type it as text)
-%       add comment:         \commred{text}, \commblue{text}, \commpurp{text}, \commgreen{text}
-%       clean code:          \cleancode{text}
-%       idem without indent: \cleanstyle{text}
-%       bold, italic, under: \textbf{text}, textit{text}, \underline{text}
-%       table:               \begin{tabular}{c c c} text \end{tabular}
-%                            ('&' for tab, '\\' for new 
-%       
-%------------------------------------------------------------------------------
-%chktex-file 1
-%chktex-file 13
-%chktex-file 29
-%chktex-file 44
+% -------------------------------LATEX SYNTAX----------------------------------
+% 
+% enter:               \\, \linebreak, \newline
+% new page:            \newpage
+% tab:                 \tab
+% new section:         \section{name} text
+% new paragraph        \subsection{name} text  (subsub...section{name} for more layers)
+%       % , &, $, _, etc:     (these are latex operators, add a "\" to type it as text)
+% add comment:         \commred{text}, \commblue{text}, \commpurp{text}, \commgreen{text}
+% clean code:          \cleancode{text}
+% idem without indent: \cleanstyle{text}
+% bold, italic, under: \textbf{text}, textit{text}, \underline{text}
+% table:               \begin{tabular}{c c c} text \end{tabular}
+% ('&' for tab, '\\' for new 
+% 
+% ------------------------------------------------------------------------------
+% chktex-file 1
+% chktex-file 13
+% chktex-file 29
+% chktex-file 44
 
 \documentclass[a4paper]{report}
 
@@ -60,10 +60,10 @@
 \usepackage[backend=biber]{biblatex}
 \addbibresource{./bibliography.bib}
 \geometry{
- a4paper,
- total={170mm,257mm},
- left=20mm,
- top=20mm,
+  a4paper,
+  total={170mm,257mm},
+  left=20mm,
+  top=20mm,
 }
 
 \graphicspath{ {images/} }
@@ -71,9 +71,9 @@
 \hypersetup{colorlinks=true, linkcolor=black}
 \interfootnotelinepenalty=10000
 
-%\subsubsectionfont{\large}
-%\subsectionfont{\Large}
-%\sectionfont{\LARGE}
+% \subsubsectionfont{\large}
+% \subsectionfont{\Large}
+% \sectionfont{\LARGE}
 
 \definecolor{dkgreen}{rgb}{0,0.6,0}
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
@@ -109,16 +109,16 @@
 
 \usepackage[colorinlistoftodos,prependcaption,textsize=footnotesize]{todonotes}
 \newcommandx{\commred}[2][1=]{\textcolor{Red}
-{\todo[linecolor=red,backgroundcolor=red!25,bordercolor=red,#1]{#2}}}
+  {\todo[linecolor=red,backgroundcolor=red!25,bordercolor=red,#1]{#2}}}
 \newcommandx{\commblue}[2][1=]{\textcolor{Blue}
-{\todo[linecolor=blue,backgroundcolor=blue!25,bordercolor=blue,#1]{#2}}}
+  {\todo[linecolor=blue,backgroundcolor=blue!25,bordercolor=blue,#1]{#2}}}
 \newcommandx{\commgreen}[2][1=]{\textcolor{OliveGreen}{\todo[linecolor=OliveGreen,
     backgroundcolor=OliveGreen!25,bordercolor=OliveGreen,#1]{#2}}}
 \newcommandx{\commpurp}[2][1=]{\textcolor{Plum}{\todo[linecolor=Plum,
     backgroundcolor=Plum!25,bordercolor=Plum,#1]{#2}}}
 
 
-%------------------------------------BEGIN DOC---------------------------------------
+% ------------------------------------BEGIN DOC---------------------------------------
 
 \begin{document}
 % \selectlanguage{english}
@@ -200,7 +200,7 @@ is directly connected to the MPPCs and plays the role of pre-amplifier,
 amplifier and digitalization of the raw signal. It is contained in an ASIC
 called \hyperref[sec:ASU]{ASU} (Section~\ref{sec:ASU}). In
 Figure~\ref{DAQ-schematics} it is indicated with the general term ASIC.
-  
+
 SPIROC is a dedicated very front-end chip developed originally for an ILC
 prototype hadronic Calorimeter with SiPM readout (CALICE experiment). It has
 been realized in 0.35$\mu$m SiGe technology. It has been developed to match the
@@ -361,7 +361,7 @@ connections.
   \end{minipage}
 \end{figure}
 
-  
+
 \section{Interface}
 \begin{figure}[H]
   \centering \includegraphics[width=0.8\linewidth, frame]{Interface}
@@ -558,7 +558,7 @@ The ground wires can be grouped together in a single wire. The 5V wires can be
 grouped together in a single wire, too. The resulting 2 wires end of the cable
 can be terminated as you like and then connected to a 5V power supply. The power
 supply should be able to generate at least TO-DO Amperes of current.
-  
+
 \section{DIF}
 I have not much to say about the Detector InterFace (DIF) board. It converts the
 signal from the ASUs into HDMI and sends it to the GDCC. It also controls the
@@ -712,13 +712,174 @@ conical tip
   \end{itemize}
 \end{itemize}
 
-\section{ZED board}
 \section{Low and High Voltage PS}
+\subsection{Keithley 2400 SourceMeter}
+From the Keithley 2400 SourceMeter manual:\textit{The Keithley 2400 SourceMeter
+  combines a precise, low-noise, highly stable DC power supply with a low-noise,
+  highly repeatable, high-impedance multimeter.}
+
+I used this device at Yokohama National University as a High Voltage source for
+my tests. This section describes how to operate this instrument from a personal
+computer. Why go through the hassle of operating the Keithley from remote, if
+every operation can be also performed directly from the detector front panel?
+you may ask \dots The fact is that, back then, I was still in the process of
+learning the Pyrame framework and I though that writing the Pyrame interface for
+this instrument could be a good chance to test my comprehension of the Pyrame
+code. Anyway, you may skip this section if you don't own a Keithley 2400 or you
+are not interested in remotely operating it.
+
+\subsubsection{GPIB or RS-232?}
+You can connect the Keithley 2400 to a PC in two ways, each one with pros and
+cons. One way is by using the GPIB port and the other is by using the RS232
+port.
+\begin{figure}[ht]
+  \centering \includegraphics[width=0.7\linewidth]{keithley-2400-rear-panel}
+  \caption{The Keithley 2400 SourceMeter rear panel.}\label{keithley-2400-rear-panel}
+\end{figure}
+
+The General Purpose Interface Bus (GPIB but also called IEEE-488) is a
+short-range bus specification. Newer standards have largely replaced GPIB for
+computer use, but it still sees some use in the test equipment field. There are
+GPIB drivers for linux but they are not usually included in most distributions
+repositories, so you may have to compile them yourself. Since the WAGASCI DAQ
+runs on Linux I am not considering here Windows and Apple. For example, you can
+find a binary package for CentOS 7 ready to install but, in the case of Ubuntu,
+you have to compile it from source yourself.
+
+To physically connect the instrument you have three options: a GPIB-to-USB
+adapter, a GPIB-to-Ethernet adapter or a PCI-GPIB board. I have personally
+tested only the GPIB-to-USB adapter case. The main problem with GPIB is that in
+any case, it is very expensive. The average price for any of those adapters is
+around 200\$ or 20000¥ on Amazon (probably much more on specialized sites).
+\begin{itemize}
+\item GPIB pros
+  \begin{itemize}
+  \item You don't need to worry about the cable pinout
+  \item Adapters and cables are quite standardized so every cable and adapter
+    will work just fine.
+  \end{itemize}
+\item GPIB cons
+  \begin{itemize}
+  \item You need an adapter or a PCI-GPIB card
+  \item It is very expensive (both cables and adapters)
+  \item It requires you to install or compile specialized drivers
+  \item If you use a GPIB-to-USB adapter you are limited to 3 meters for the
+    length of the USB cable
+  \end{itemize}
+\end{itemize}
+
+In the case of RS-232, only a simple serial cable with DB-9 connectors is needed.
+\begin{itemize}
+\item RS-232 pros
+  \begin{itemize}
+  \item It doesn't require a specialized adapter (or a very cheap one)
+    since virtually any Desktop motherboard already have a serial port (called
+    sometimes COM port).
+  \item Cables and adapters are quite cheap. In the case of a Desktop PC you
+    can get by with very little money (20\$ or 2000¥).
+  \item It doesn't required specialized drivers
+  \end{itemize}
+\item RS-232 cons
+  \begin{itemize}
+  \item Choosing the right cable and adapter is difficult because there are so
+    many different types of RS-232 cables.
+  \item You may need to refer to your motherboard and to the Keithley serial
+    port pinout schematics to understand which is the right cable/adapter or to
+    fix the adapter pinout if you bought the wrong one (like me).
+  \end{itemize}
+\end{itemize}
+If you chose the GPIB option, you can go straight to section TO-DO to learn how
+to configure and use it in the Pyrame framework.
+
+If you chose the RS-232 option in the next subsection I will explain how to
+chose the right cable and adapter and test if the pinout is correct.
+\subsubsection{RS-232 connection and pinout}
+The Keithley RS-232 serial port is connected to the serial port of a computer
+using a straight-through RS-232 cable terminated with DB-9 connectors. Do not
+use a null modem cable. The serial port uses the transmit (TXD), receive (RXD),
+and signal ground (GND) lines of the RS-232
+standard. Figure~\ref{RS232-pinout-instrument} shows the rear panel connector
+for the RS-232 interface and the pinout for the connector.
+\begin{figure}[ht]
+  \centering \includegraphics[width=0.4\textwidth]{RS232-pinout-connector}\hfill
+  \centering \includegraphics[width=0.4\textwidth]{RS232-pinout-instrument}
+  \caption{}\label{RS232-pinout-instrument}
+\end{figure}
+
+Most desktop motherboards have a serial port (usually called COM) port like
+shown in Figure~\ref{DB9-board-connection} with the relative adapter (usually to
+be bought separately).
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.55\textwidth,frame]{DB9-board-connection}\hfill
+  \includegraphics[width=0.4\textwidth]{RS-232-adapter}
+    \caption{Serial port (COM port) on a motherboard with an adapter
+    attached.}\label{DB9-board-connection}
+\end{figure}
+
+Refer to your motherboard manual for the correct pinout of the COM port. I made
+the mistake of buying the wrong adapter so I had to change the wires order. For
+example the motherboard that I used here is a ASUS PRIME H270 PRO and, according
+to the manual, the COM port pinout is shown in Figure~\ref{RS232-pinout-PC}
+\begin{figure}[H]
+  \centering \includegraphics[width=\linewidth]{RS232-pinout-PC}
+  \caption{ASUS PRIME H270 PRO motherboard COM port pinout. It may be different
+    in your case!!!}\label{RS232-pinout-PC}
+\end{figure}
+
+Notice that the pin TXD (Transmit Data) on the PC side
+(Figure~\ref{RS232-pinout-PC}) correspond the pin RXD (Receive Data) on the
+Keithley side (Figure~\ref{RS232-pinout-instrument}) and vice versa. This is
+simply because the data transmitted by the PC is received by the instrument and
+vice versa. Same is for the RTS and CTS pins.
+Figure~\ref{RS-232_DE-9_Connector_Pinouts} shows what is the difference between
+the PC and device pinouts. Usually you only have to worry about the PC side.
+\begin{figure}[ht]
+  \centering \includegraphics[width=0.9\linewidth]{RS-232_DE-9_Connector_Pinouts}
+  \caption{RS-232 DE-9 Connector Pinouts}\label{RS-232_DE-9_Connector_Pinouts}
+\end{figure}
+I am afraid that, in any case, a certain degree of preemptive research is
+unavoidable to determine which are the best cable and adapter. If you are a
+WAGASCI collaborator and you are not confident in your choice, feel free to
+contact me.
+\subsubsection{Serial cable loopback test}
+To test if the RS-232 adapter and cable are working OK, you can do a simple
+loopback test. A loopback test is a simple test where you short the transmit and
+receive pins of your cable or adapter (Figure~\ref{RS-232_loopback}) and try to
+simultaneously send and receive some random string over the cable. Since those
+pins are shorted the sent string is reflected back and received.
+\begin{figure}[ht]
+  \centering \includegraphics[width=0.4\linewidth]{RS-232_loopback}
+  \caption{RS-232 loopback test: pins to short. You can use a simple
+    jumper to short the pins.}\label{RS-232_loopback}
+\end{figure}
+Then open a two terminal on the PC and in one write:
+\begin{lstlisting}
+      sudo stty -F /dev/ttyS0 9600 cs8 -cstopb -parenb -echo -onlcr
+      while (true) do sudo cat -A /dev/ttyS0 ; done
+\end{lstlisting}
+  and let it run. In the other terminal write:
+\begin{lstlisting}
+      echo "Hello World!" | sudo tee /dev/ttyS0
+\end{lstlisting}
+I have assumed that \cleanstyle{/dev/ttyS0} is the device file corresponding to
+your adapter or cable. Your actual device name could be different. In case of
+success you will see the same string appear in the first terminal as well.
 \section{Temperature Monitors}
 \section{Water Level monitor}
 The USB drive must be formatted with MBR and FAT32.
-\section{DAQ PC}
-
+\section{The WAGASCI rack}
+TO-DO add picture
+The WAGASCI rack is located on the south side of the WAGASCI detector as shown
+in Pictures TO-DO. It is a single rack where all the acquisition electronics and
+DAQ PCs are located. In this section I will explain all that there is to know
+about it and how to turn it on and off. Be aware that until now the Proton
+module and INGRID module data is not acquired through the WAGASCI rack but
+through the INGRID one located on the SS floor.
+\subsection{DAQ PC}
+There are two DAQ PC in the
+\subsection{ZED board}
+\subsection{NIM crate}
 \chapter{DAQ software}
 The main software for data acquisition of the WAGASCI experiment is called Anpan
 (\textbf{Acquisition Networked Program for Accelerated Neutrinos}). It is based
