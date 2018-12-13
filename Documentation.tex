@@ -456,8 +456,17 @@ set. Refer to table~\ref{tab:IF-jumpers} for a summary of the pinout.
     \hline
   \end{tabular}
   \egroup
-  \caption{Interface jumpers}\label{tab:IF-jumpers}
+  \caption{Interface jumpers. The dash '-' symbol indicates a direct connection
+    of only two pins. So for example by 8-18 I mean connect pin 8 to pin 18 and NOT
+    connect pin 8 to pin 9 to pin 10 to \dots to pin 18. The pin numbers are not
+    written on the interface. Until now I have no idea of how to determine the pin
+    numbers but to look at already jumper-ed Interfaces or from the following
+    Figure~\label{interface-jumpers}.}\label{tab:IF-jumpers}
 \end{table}
+\begin{figure}[H] \centering
+  \includegraphics[width=0.8\linewidth]{interface-jumpers}
+  \caption{Interface jumpers setup for 4 (all) ASU chains}\label{interface-jumpers}
+\end{figure}
 
 \subsection{How to patch the interface}\label{sec:how-patch-interface}
 As can be read in Tamura Riku's thesis (after correcting some typos):
