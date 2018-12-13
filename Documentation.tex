@@ -327,41 +327,6 @@ and~\ref{ASU-daisy-chain} to reflect the signal back to the interface.
   \label{ASU-daisy-chain}
 \end{figure}
 
-Moreover, pay attention when you connect the ASUs to the interface because it is
-not as straightforward as it seems. As can be seen in
-Figure~\ref{fig:ASU-Interface1}, it can happen that the cables cross. Notice
-also that the bump in the cable have to correspond to the silkscreen prints on
-the circuit. Anyway, you can refer to table~\ref{tab:ASU-IF} for the ASU-IF
-connections.
-\begin{table}[H]
-  \centering \bgroup
-  \def\arraystretch{1.5}% 1 is the default, change whatever you need
-  \begin{tabular}{|c|c|c|c|c|}
-    \hline
-    & \textbf{ASU 1} & \textbf{ASU 2} & \textbf{ASU 3} & \textbf{ASU 4} \\
-    \hline
-    \textbf{ASU connector} & J1 J2 & J1 J2 & J1 J2 & J1 J2  \\
-    \hline
-    \textbf{IF connector} & J2 J5 & ? & ? & ?  \\ % chktex-file 26
-    \hline
-  \end{tabular}
-  \egroup
-  \caption{ASU - Interface connections}\label{tab:ASU-IF}
-\end{table}
-\begin{figure}[ht]
-  \centering
-  \begin{minipage}{0.4\linewidth}
-    \centering \includegraphics[width=0.9\linewidth,frame]{ASU-Interface1}
-    \caption{Pictures the flat cables that connect an ASU to its
-      Interface}\label{fig:ASU-Interface1}
-  \end{minipage}%
-  \begin{minipage}{0.5\linewidth}
-    \centering \includegraphics[width=0.9\linewidth,frame]{ASU-Interface2}
-    \caption{Close view of the connectors}\label{fig:ASU-Interface2}
-  \end{minipage}
-\end{figure}
-
-
 \section{Interface}
 \begin{figure}[H]
   \centering \includegraphics[width=0.8\linewidth, frame]{Interface}
@@ -385,6 +350,114 @@ Section~\ref{sec:how-make-low-voltage-cable}.
 The Interface shown if Figure~\ref{fig:Interface} is just a prototype (before
 the patch described in Section~\ref{sec:how-patch-interface} is applied). The
 actual Interface board may look different.
+
+\subsection{How to connect the Interface to the
+  ASUs}\label{sec:interface-ASU-connection}
+Each interface can be connected to 4 ASU chains. Depending on how many chains
+are to be connected, the Interface jumpers must be set appropriately (see next
+section).  Refer to
+Figures~\ref{fig:Interface_ASU_connection},~\ref{fig:ASU-Interface1}
+and~\ref{fig:ASU-Interface2} for a visual explanation of how to connect the
+Interface and the ASUs.
+\begin{figure}[H]
+  \centering \includegraphics[width=0.6\linewidth,
+  frame]{Interface_ASU_connection}
+  \caption{Interface (before buffer
+    addition)}\label{fig:Interface_ASU_connection}
+\end{figure}
+\begin{figure}[ht]
+  \centering
+  \begin{minipage}{0.4\linewidth}
+    \centering \includegraphics[width=0.9\linewidth,frame]{ASU-Interface1}
+    \caption{Pictures the flat cables that connect an ASU to its
+      Interface}\label{fig:ASU-Interface1}
+  \end{minipage}%
+  \begin{minipage}{0.5\linewidth}
+    \centering \includegraphics[width=0.9\linewidth,frame]{ASU-Interface2}
+    \caption{Close view of the connectors}\label{fig:ASU-Interface2}
+  \end{minipage}
+\end{figure}
+As can be seen in Figure~\ref{fig:ASU-Interface1}, depending on the relative
+position and orientation of the ASUs and Interface, it can happen that the
+cables cross. Notice also that the bump in the cable have to correspond to the
+silkscreen prints on the circuit. Refer to table~\ref{tab:ASU-IF} for the ASU-IF
+connections. The Jx mark is written on the PCB next to the relative connector,
+where x is the connector number.
+\begin{table}[H]
+  \centering \bgroup
+  \def\arraystretch{1.5}% 1 is the default, change whatever you need
+  \begin{tabular}{|c|c|c|c|c|}
+    \hline
+    \textbf{Interface} & \textbf{ASU} \\
+    \hline
+    J2 & J1 (ASU1)  \\
+    \hline
+    J5 & J2 (ASU1)  \\
+    \hline
+    J6 & J1 (ASU2)  \\
+    \hline
+    J7 & J2 (ASU2)  \\
+    \hline
+    J8 & J1 (ASU3)  \\
+    \hline
+    J9 & J2 (ASU3)  \\
+    \hline
+    J10 & J1 (ASU4)  \\
+    \hline
+    J11 & J2 (ASU4)  \\
+    \hline
+  \end{tabular}
+  \egroup
+  \caption{ASU - Interface connections}\label{tab:ASU-IF}
+\end{table}
+
+\subsection{How to set the jumpers on the
+  Interface}\label{sec:interface-jumpers}
+Each interface can be connected to 4 ASU chains. Depending on how many chains
+are to be connected, the Interface jumpers must be set appropriately. The
+following four figures (\ref{readout_version_prod},
+\ref{srin_srout_version_prod},~\ref{srinread_sroutread_version_prod},
+\ref{start_end_readout_prod}) explain in detail which jumpers have to be
+set. Refer to table~\ref{tab:IF-jumpers} for a summary of the pinout.
+\begin{figure}[H] \centering
+\includegraphics[width=0.8\linewidth]{readout_version_prod}
+  \caption{}\label{readout_version_prod}
+\end{figure}
+\begin{figure}[H] \centering
+\includegraphics[width=0.8\linewidth]{srin_srout_version_prod}
+  \caption{}\label{srin_srout_version_prod}
+\end{figure}
+\begin{figure}[H] \centering
+\includegraphics[width=0.8\linewidth]{srinread_sroutread_version_prod}
+  \caption{}\label{srinread_sroutread_version_prod}
+\end{figure}
+\begin{figure}[H] \centering
+\includegraphics[width=0.8\linewidth]{start_end_readout_prod}
+  \caption{}\label{start_end_readout_prod}
+\end{figure}
+\begin{table}[H]
+  \centering \bgroup
+  \def\arraystretch{1.5}% 1 is the default, change whatever you need
+  \begin{tabular}{|c|c|c|c|c|}
+    \hline
+    & \textbf{1 Chain (J2J5)} & \textbf{2 Chains (J2J5 and J6J7)} & \textbf{4 Chains} \\
+    \hline
+    \textbf{J12} & 1-2,3-4  & 1-2,4-6,7-8 & 1-2,4-6,8-10,12-14,16-18 \\
+    \hline
+    \textbf{J13} & 1-2,3-4  & 1-2,4-6,7-8 & 1-2,4-6,8-10,12-14,16-18 \\
+    \hline
+    \textbf{J15} & 1-2,3-4  & 1-2,4-6,8-18 & 1-2,4-6,8-10,12-14,16-18 \\
+    \hline
+    \textbf{J25} & no jumpers & 1-3 & 1-3,5-7,9-11 \\
+    \hline
+    \textbf{J26} & no jumpers & 1-3 & 1-3,5-7,9-11 \\
+    \hline
+    \textbf{J27} & no jumpers & 1-3 & 1-3,5-7,9-11 \\
+    \hline
+  \end{tabular}
+  \egroup
+  \caption{Interface jumpers}\label{tab:IF-jumpers}
+\end{table}
 
 \subsection{How to patch the interface}\label{sec:how-patch-interface}
 As can be read in Tamura Riku's thesis (after correcting some typos):
@@ -503,27 +576,32 @@ want to. Anyway \dots
   buffer. Connect each pin to the wire number 13 of the flat cables coming off
   J2, J6, J8 and J10. The order is not relevant. Of course, in the case of the
   SideMRD, only one connection is needed (for example J2). Refer to
-  Figure~\ref{connection_flat_cable} for a visual explanation.
+  Figure~\ref{connection_flat_cable_1} for a visual explanation.
   \begin{figure}[H]
-    \centering \includegraphics[width=0.6\linewidth]{connection_flat_cable}
+    \centering \includegraphics[width=0.6\linewidth]{connection_flat_cable_1}
     \caption{How to connect the \#13 wire to the buffer.}%
-    \label{connection_flat_cable}
+    \label{connection_flat_cable_1}
   \end{figure}
 \item Connect wire number 50 of the flat cable (it is white in our case) to any
   ground pin on the interface board. You have to connect the ``ASU end'' of the
-  wire to ground in a similar way as shown in Figure~\ref{connection_flat_cable}
+  wire to ground in a similar way as shown in Figure~\ref{connection_flat_cable_2}
   for the case of cable 13.
+    \begin{figure}[H]
+    \centering \includegraphics[width=0.6\linewidth]{connection_flat_cable_2}
+    \caption{How to connect the \#49 and \#50 wires to the DVDD and Ground pins.}%
+    \label{connection_flat_cable_1}
+  \end{figure}
 \item Connect wire number 49 of the flat cable (it is blue in our case) to the
-  DVD pin on the interface board. The DVD pin is located near the M9 chip that
+  DVD pin on the interface board. The DVDD pin is located near the M9 chip that
   you just desoldered. You have to connect the ``ASU end'' of the wire to the
-  DVD pin in a similar way as shown in Figure~\ref{connection_flat_cable} for
+  DVD pin in a similar way as shown in Figure~\ref{connection_flat_cable_2} for
   the case of cable 13.
 \item The final result should look more or less like
   Figure~\ref{fixed-interface}.
   \begin{figure}[ht]
     \centering \includegraphics[frame,width=0.9\linewidth]{fixed-interface}
-    \caption{Final result. Notice that the ground wire coming from wire 50 of
-      the flat cable is ambiguously red and not black as it should be. The green
+    \caption{Final result. The ground wire coming from wire 50 of
+      the flat cable is red (sorry for the ambiguity). The green
       wire is coming off from wire number 49 and is connected to the DVD pin on
       the Interface. In total there are three yellow output wires coming off the
       buffer chip but only one is actually used.}\label{fixed-interface}
@@ -636,13 +714,57 @@ For this, you need to find or buy
   on your Power Supply and your ``taste'').
 \end{itemize}
 
-About the connection, you need to solder the pins A32,B32,C32 together and
-connect these one to a red cable that you will then use for the 5V voltage.
+In the following I will show how to concretely make the said cable using a hot
+air station and soldering iron. You don't necessarily need a hot air station and
+you can get the same result with only a soldering iron and a bit of
+patience. The following pictures refer to two cables made with slightly
+different techniques, so some minor details can differ between the pictures.
 
-You need to solder the pins A9, A11, A15, A17, A19, B20, B23, C9 together and
-connect these one to a black cable that you will then use for the ground.
+\begin{enumerate}
+\item First cut the breadboard in the desired shape. As long as the cut
+  breadboard doesn't hinder the two VME connectors from fitting one into the
+  other, any shape is fine.
+\item Then apply the solder paste evenly on the breadboard surface and insert
+  the female connector. I have used two copper wires for the ground connections,
+  but any other solution to make the connections is fine.
+  \begin{figure}[H]
+    \centering \includegraphics[width=0.7\linewidth,
+    frame]{power-connector-solder-paste}
+  \end{figure}
+\item Solder all the pins using the hot air station (I recommend a air
+  temperature of 370 degrees Celsius)
+  \begin{figure}[H]
+    \centering \includegraphics[width=0.7\linewidth,
+    frame]{power-connector-hot-air}
+  \end{figure}
+\item Solder the pins A32, B32, C32 together and connect these one to a red
+  cable that you will then use for the 5V voltage.  Then solder the pins A9,
+  A11, A15, A17, A19, B20, B23, C9 together and connect these ones to a black
+  cable that you will then use for the ground. To identify these pins you have
+  first to identify the rows (A,B,C) and columns (1,2,\dots,31,32) of your
+  connector. As explained before, you have to use a standard 3 rows, 92 pins VME
+  female connector. This connector must have three rows labeled A, B and C and
+  32 pins for each row labeled 1,2,\dots,31,32, for a total of 96 pins. Don't
+  look at whatever may it written on the adapter itself or on the internet
+  because it might be different from the GDCC or CCC specifications (as happened
+  to me). Just take a look at the GDCC and in particular at the silkscreen near
+  the VME connector. As shown in the next picture, look for the C1 and C32
+  labels next to the respective pins. In the picture is also shown how to
+  identify the A, B and C rows.
+  \begin{figure}[H]
+    \centering \includegraphics[width=0.48\linewidth,
+    frame]{power-connector-connector}\hfill
+    \includegraphics[width=0.48\linewidth, frame]{power-connector-connections}
+  \end{figure}
+  Then solder two long-ish wires for connecting the +5V and ground to a power
+  supply and you cables are ready.
+  \begin{figure}[H]
+    \centering \includegraphics[width=0.48\linewidth,
+    frame]{power-connector-cable-1}\hfill \includegraphics[width=0.48\linewidth,
+    frame]{power-connector-cable-2}
+  \end{figure}
+\end{enumerate}
 
-TO-DO add pictures and pinout
 
 \section{CCC}
 Clock and Control Card (CCC)
