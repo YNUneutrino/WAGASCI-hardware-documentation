@@ -15,7 +15,6 @@
 % 
 % enter:               \\, \linebreak, \newline
 % new page:            \newpage
-% tab:                 \tab
 % new section:         \section{name} text
 % new paragraph        \subsection{name} text  (subsub...section{name} for more layers)
 %       % , &, $, _, etc:     (these are latex operators, add a "\" to type it as text)
@@ -39,7 +38,11 @@
 \usepackage{CJKutf8}
 \usepackage{epigraph}
 \usepackage{amsmath}
+\usepackage{colortbl}
 \usepackage{xcolor}
+\usepackage{array}
+\usepackage{xtab}
+\usepackage{booktabs}
 \usepackage{graphicx}
 \usepackage{subcaption}
 \usepackage{grffile}
@@ -58,27 +61,48 @@
 \usepackage[export]{adjustbox}
 \usepackage{textcomp}
 \usepackage[backend=biber]{biblatex}
-\addbibresource{./bibliography.bib}
-\geometry{
-  a4paper,
-  total={170mm,257mm},
-  left=20mm,
-  top=20mm,
-}
 
+% bibliography file
+\addbibresource{./bibliography.bib}
+
+% page format
+% \geometry{
+%   a4paper,
+%   total={170mm,257mm},
+%   left=20mm,
+%   top=20mm,
+% }
+
+% add padding to tables
+\renewcommand{\arraystretch}{1.5}
+
+% images folder location
 \graphicspath{ {images/} }
-\newcommand\tab[1][1cm]{\hspace*{#1}}
-\hypersetup{colorlinks=true, linkcolor=black}
+
+% blue links
+\hypersetup{colorlinks=true, linkcolor=blue}
+
+% Keep all footnotes on the according page
 \interfootnotelinepenalty=10000
 
 % \subsubsectionfont{\large}
 % \subsectionfont{\Large}
 % \sectionfont{\LARGE}
 
+% define various colors
 \definecolor{dkgreen}{rgb}{0,0.6,0}
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
 \definecolor{mauve}{rgb}{0.58,0,0.82}
+\definecolor{cleanOrange}{HTML}{D14D00}
+\definecolor{cleanYellow}{HTML}{FFFF99}
+\definecolor{cleanBlue}{HTML}{3d0099}
+\colorlet{Red}{red}
+\colorlet{Blue}{blue}
+\colorlet{Green}{green}
+\colorlet{Purple}{purple}
+\newcommand{\cleanstyle}[1]{\text{\textcolor{cleanOrange}{\texttt{#1}}}}
 
+% formatting for bash language
 \lstset{frame=tb,
   language=bash,
   aboveskip=3mm,
@@ -95,18 +119,11 @@
   breakatwhitespace=true,
   tabsize=3
 }
-
-
-\definecolor{cleanOrange}{HTML}{D14D00}
-\definecolor{cleanYellow}{HTML}{FFFF99}
-\definecolor{cleanBlue}{HTML}{3d0099}
-
-\newcommand{\cleanstyle}[1]{\text{\textcolor{cleanOrange}{\texttt{#1}}}}
-
 \makeatletter
 \providecommand*{\toclevel@lstlisting}{0}
 \makeatother
 
+% add colored comments
 \usepackage[colorinlistoftodos,prependcaption,textsize=footnotesize]{todonotes}
 \newcommandx{\commred}[2][1=]{\textcolor{Red}
   {\todo[linecolor=red,backgroundcolor=red!25,bordercolor=red,#1]{#2}}}
@@ -116,7 +133,6 @@
     backgroundcolor=OliveGreen!25,bordercolor=OliveGreen,#1]{#2}}}
 \newcommandx{\commpurp}[2][1=]{\textcolor{Plum}{\todo[linecolor=Plum,
     backgroundcolor=Plum!25,bordercolor=Plum,#1]{#2}}}
-
 
 % ------------------------------------BEGIN DOC---------------------------------------
 
@@ -164,12 +180,57 @@ On the other hand this very documentation is meant more as a ``User Guide'', so,
 while referring to the said literature for the more general and technical
 remarks, I will only focus on practical usage scenarios and examples.
 \begin{figure}[ht]
-  \centering \includegraphics[width=0.7\linewidth]{DAQ-schematics}
-  \caption{The schematics of the WAGASCI DAQ system. The very same schematics
-    can be referred to the SideMRD where instead of 20 boards there are only 3
-    and instead of arrayed MPPCs there are Single MPPCs
-    adapters}\label{DAQ-schematics}
+  \centering \includegraphics[width=0.7\linewidth]{DAQ-schematics-1} \\
+  \includegraphics[width=0.7\linewidth]{DAQ-schematics-2}
+  \caption{Schematics of the WAGASCI DAQ system electronics. These figure only
+    shows the connections for a single DIF. The maximum theoretical number of
+    ASUs for a single DIF is 4x256 but no more than 4x5 is needed for
+    WAGASCI.}\label{DAQ-schematics}
 \end{figure}
+
+\subsection{List of boards, connectors and cables}
+In this section I try to list some of the boards, connectors and cables for the
+WAGASCI experiment. I only focus on the parts that we may need to (re)-purchase
+in future. This is not meant to be a thorough list but more a memo to my future
+self if we ever have to shop for spares or replacements.
+\begin{figure}[ht]
+  \centering
+  \begin{minipage}{0.48\linewidth}
+    \centering
+    \includegraphics[width=0.8\linewidth]{WAGASCI-open-view} \\
+    \includegraphics[width=0.98\linewidth]{DAQ-overview-WAGASCI}
+    \caption{\small Schematics of WAGASCI boards and connections for a single
+      detector. For two detectors everything doubles but the GDCC, CCC and DAQ
+      PC}\label{fig:DAQ-overview-WAGASCI}
+  \end{minipage}%
+  \begin{minipage}{0.48\linewidth}
+    \centering
+    \includegraphics[width=0.8\linewidth]{SideMRD-open-view} \\
+    \includegraphics[width=0.98\linewidth]{DAQ-overview-SideMRD}
+    \caption{\small Schematics of SideMRD boards and connections for a single
+      detector. For two detectors everything doubles but the GDCC, CCC and DAQ
+      PC}\label{fig:DAQ-overview-SideMRD}
+  \end{minipage}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\linewidth,frame]{WAGASCI-housing-schematics}
+    \caption{Schematics of the WAGASCI housing
+      connectors}\label{fig:WAGASCI-housing-schematics}
+  \end{figure}
+\commred{To check if the connectors really match with the figure}
+  
+{\input{housing}\commblue{Binder connectors are currently not on sale in
+    Japan. They may appear again on sale on RS Japan in future.}}
+
+{\input{cables-internal}\commred{To check where the LED cable have to be
+    connected}}
+
+{\input{cables-external}\commred{To check the length of the HDMI cables and the
+    model of the DSUB cable}}
+
+\arrayrulecolor{black}\doublerulesepcolor{black}
 
 \subsection{References}
 The documentation about the WAGASCI electronics is relatively vast but randomly
@@ -461,7 +522,7 @@ set. Refer to table~\ref{tab:IF-jumpers} for a summary of the pinout.
     connect pin 8 to pin 9 to pin 10 to \dots to pin 18. The pin numbers are not
     written on the interface. Until now I have no idea of how to determine the pin
     numbers but to look at already jumper-ed Interfaces or from the following
-    Figure~\label{interface-jumpers}.}\label{tab:IF-jumpers}
+    Figure~\ref{interface-jumpers}.}\label{tab:IF-jumpers}
 \end{table}
 \begin{figure}[H] \centering
   \includegraphics[width=0.8\linewidth]{interface-jumpers}
@@ -598,7 +659,7 @@ want to. Anyway \dots
     \begin{figure}[H]
     \centering \includegraphics[width=0.6\linewidth]{connection_flat_cable_2}
     \caption{How to connect the \#49 and \#50 wires to the DVDD and Ground pins.}%
-    \label{connection_flat_cable_1}
+    \label{connection_flat_cable_2}
   \end{figure}
 \item Connect wire number 49 of the flat cable (it is blue in our case) to the
   DVD pin on the interface board. The DVDD pin is located near the M9 chip that
@@ -1007,10 +1068,128 @@ DAQ PCs are located. In this section I will explain all that there is to know
 about it and how to turn it on and off. Be aware that until now the Proton
 module and INGRID module data is not acquired through the WAGASCI rack but
 through the INGRID one located on the SS floor.
-\subsection{DAQ PC}
-There are two DAQ PC in the
-\subsection{ZED board}
 \subsection{NIM crate}
+
+\section{DAQ PC}
+
+\section{ANA PC}
+
+\section{Beam Trigger}
+\begin{figure}[ht]
+  \centering \includegraphics[width=\linewidth]{beam-trigger}
+  \caption{Beam trigger processing system overview}\label{fig:beam-trigger}
+\end{figure}
+\subsection{Logic Levels}
+Just a review of all the logic families involved in the beam trigger processing.
+This section may be useful to probe the signals with an oscilloscope.
+\subsubsection{Emitter Coupled Logic (ECL)}
+Emitter Coupled Logic (ECL), sometimes referred to as Current Mode Logic, is an
+extremely high-speed digital technology. ECL has a propagation time of 0.5 - 2
+ns, which is much faster than TTL. However, its power dissipation is three to 10
+times higher than that of TTL.
+
+The output logic of ECL, much like that of TTL, varies from a LOW state to a
+HIGH state. However, the voltage levels of these states differ between ECL and
+TTL. The output logic swing of ECL gates varies from a LOW state of -1.75 volts
+to a HIGH state of -0.9 volts with respect to ground. The following table is an
+illustration of when positive logic is used while referring to a logic ``0'' or
+``1''.
+\begin{table}[ht]
+  \centering
+  \begin{tabular}{l l l l}
+    \hline
+    \textbf{Voltage Level} & \textbf{State} & \textbf{Logic} & \textbf{Boolean}
+    \\
+    \hline
+    -1.75 V & LOW & False & 0 \\
+    -0.9 V & HIGH & True & 1 \\
+    \hline
+  \end{tabular}
+  \caption{Fast command packet format}
+\end{table}
+
+Some common terms used when referring to ECL circuits:
+\begin{itemize}
+\item \textbf{VEE}: Negative power, which is typically -5.2 volts.
+\item \textbf{VBB}: Switching threshold, which is typically -1.29 volts.
+\item \textbf{VTT}: Termination voltage, which is typically -2.0 volts.
+\item \textbf{VCC}: Ground, on most ECL circuits.
+\end{itemize}
+
+\subsubsection{Transistor-Transistor Logic (TTL)}
+
+Some common terms used when referring to ECL circuits:
+\begin{itemize}
+\item \textbf{VOH}: Minimum OUTPUT Voltage level a TTL device will provide for a HIGH signal.
+\item \textbf{VIH}: Minimum INPUT Voltage level to be considered a HIGH.
+\item \textbf{VOL}: Maximum OUTPUT Voltage level a device will provide for a LOW signal.
+\item \textbf{VIL}: Maximum INPUT Voltage level to still be considered a LOW.
+\end{itemize}
+
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}[c]{0.15\textwidth}
+    \includegraphics[width=\textwidth,frame]{TTL1}
+  \end{subfigure}
+  \centering
+  \begin{subfigure}[c]{0.7\textwidth}
+    \includegraphics[width=\textwidth,frame]{TTL2}
+  \end{subfigure}
+\end{figure}
+
+You will notice that the minimum output HIGH voltage (VOH) is 2.7 V. Basically,
+this means that output voltage of the device driving HIGH will always be at
+least 2.7 V. The minimum input HIGH voltage (VIH) is 2 V, or basically any
+voltage that is at least 2 V will be read in as a logic 1 (HIGH) to a TTL
+device. You will also notice that there is cushion of 0.7 V between the output
+of one device and the input of another. This is sometimes referred to as noise
+margin.
+
+Likewise, the maximum output LOW voltage (VOL) is 0.4 V. This means that a
+device trying to send out a logic 0 will always be below 0.4 V. The maximum
+input LOW voltage (VIL) is 0.8 V. So, any input signal that is below 0.8 V will
+still be considered a logic 0 (LOW) when read into the device.
+
+What happens if you have a voltage that is in between 0.8 V and 2 V? Well, your
+guess is as good as mine. Honestly, this range of voltages is undefined and
+results in an invalid state, often referred to as floating. If an output pin on
+your device is ``floating'' in this range, there is no certainty with what the
+signal will result in. It may bounce arbitrarily between HIGH and LOW.
+
+\subsubsection{Nuclear Instrumentation Module (NIM)}
+The NIM standard two types of standards for logical signals, namely:
+\begin{itemize}
+\item Fast-negative logic with rise times of order of 1 ns. The range is set
+  by the current range corresponding to 0V and -8V.
+  \begin{table}[H]
+    \centering
+    \begin{tabular}{l l l}
+      \hline
+      & \textbf{Output must deliver} & \textbf{Input must accept} \\
+      \hline
+      Logic 1 & -14 mA to -18 mA & -12 mA to -36 mA \\
+      Logic 0 & -1 mA to +1 mA & -4 mA to +20 mA \\
+      \hline
+    \end{tabular}
+    \caption{Fast-negative NIM logic}
+  \end{table}
+\item Slow-positive signals:
+  \begin{table}[H]
+    \centering
+    \begin{tabular}{l l l}
+      \hline
+      & \textbf{Output must deliver} & \textbf{Input must accept} \\
+      \hline
+      Logic 1 & +4 to +12 V & +3 to +12 V \\
+      Logic 0 & +1 to -2V & +1.5 to -2 V \\
+      \hline
+    \end{tabular}
+    \caption{Fast-negative NIM logic}
+  \end{table}
+\end{itemize}
+
+% -------------------------------------------------------------------------------- %
+
 \chapter{DAQ software}
 The main software for data acquisition of the WAGASCI experiment is called Anpan
 (\textbf{Acquisition Networked Program for Accelerated Neutrinos}). It is based
