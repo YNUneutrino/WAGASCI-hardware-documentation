@@ -43,6 +43,7 @@
 \usepackage{array}
 \usepackage{xtab}
 \usepackage{booktabs}
+\usepackage{pbox}
 \usepackage{graphicx}
 \usepackage{subcaption}
 \usepackage{grffile}
@@ -179,7 +180,7 @@ get as many publications as possible out of it, too.
 On the other hand this very documentation is meant more as a ``User Guide'', so,
 while referring to the said literature for the more general and technical
 remarks, I will only focus on practical usage scenarios and examples.
-\begin{figure}[ht]
+\begin{figure}[H]
   \centering \includegraphics[width=0.7\linewidth]{DAQ-schematics-1} \\
   \includegraphics[width=0.7\linewidth]{DAQ-schematics-2}
   \caption{Schematics of the WAGASCI DAQ system electronics. These figure only
@@ -187,13 +188,7 @@ remarks, I will only focus on practical usage scenarios and examples.
     ASUs for a single DIF is 4x256 but no more than 4x5 is needed for
     WAGASCI.}\label{DAQ-schematics}
 \end{figure}
-
-\subsection{List of boards, connectors and cables}
-In this section I try to list some of the boards, connectors and cables for the
-WAGASCI experiment. I only focus on the parts that we may need to (re)-purchase
-in future. This is not meant to be a thorough list but more a memo to my future
-self if we ever have to shop for spares or replacements.
-\begin{figure}[ht]
+\begin{figure}[H]
   \centering
   \begin{minipage}{0.48\linewidth}
     \centering
@@ -213,6 +208,12 @@ self if we ever have to shop for spares or replacements.
   \end{minipage}
 \end{figure}
 
+\subsection{List of boards, connectors and cables}
+In this section, I try to list some of the boards, connectors and cables for the
+WAGASCI experiment. I only focus on the parts that we may need to (re)-purchase
+in future. This is not meant to be a thorough list but more like a memo to my future
+self if we ever have to shop for spares or replacements.
+
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.7\linewidth,frame]{WAGASCI-housing-schematics}
@@ -229,6 +230,12 @@ self if we ever have to shop for spares or replacements.
 
 {\input{cables-external}\commred{To check the length of the HDMI cables and the
     model of the DSUB cable}}
+
+{\input{cables-beam-trigger}\commred{To check the references}}
+
+{\input{rack}\commred{To check the VME crate remarks meaning}}
+
+\input{slow-control}
 
 \arrayrulecolor{black}\doublerulesepcolor{black}
 
@@ -329,7 +336,7 @@ Each channel of SPIROC2 is made of:
   figure~\ref{threshold-bug}. This erroneous behavior has been fixed in the
   SPIROC2E version but it has been shown that it doesn't affect the measure so
   much as to require a replacement of all the chips.
-  \begin{figure}[ht]
+  \begin{figure}[H]
     \includegraphics[width=\linewidth]{threshold-bug.png}
     \caption{The threshold should be applied on the upper part of the signal and
       not on the lower. This figure shows two signals over the respective
@@ -355,7 +362,7 @@ has been mostly devoted to characterizing the analog performance, which meets
 the design specifications.
 
 \subsection{ASU}\label{sec:ASU}
-\begin{figure}[ht]
+\begin{figure}[H]
   \centering \includegraphics[width=0.8\linewidth, frame]{ASU}
   \caption{Active Sensor Unit (ASU) board}
 \end{figure}
@@ -364,14 +371,14 @@ SPIROC2D chip. It is basically an adapter to connect the SPIROC chip to the
 MPPCs and to the rest of the DAQ system. The ASUs can be daisy-chained together
 until a maximum of 40 units (4 rows of 5 ASUs) for every DIF, as can be seen in
 Figure~\ref{daisy-chain}.
-\begin{figure}[ht]
+\begin{figure}[H]
   \centering \includegraphics[width=0.7\linewidth]{daisy-chain}
   \caption{Schematic of ASU daisy chain}\label{daisy-chain}
 \end{figure}
 The jumpers of the last ASU of every row must be set as shown in
 Figures~\ref{fig:ASU-with-jumpers},~\ref{fig:ASU-without-jumpers}
 and~\ref{ASU-daisy-chain} to reflect the signal back to the interface.
-\begin{figure}[ht]
+\begin{figure}[H]
   \centering
   \begin{minipage}{0.5\linewidth}
     \centering \includegraphics[width=0.98\linewidth,frame]{ASU-with-jumpers}
@@ -382,7 +389,7 @@ and~\ref{ASU-daisy-chain} to reflect the signal back to the interface.
     \caption{ASU without jumpers}\label{fig:ASU-without-jumpers}
   \end{minipage}
 \end{figure}
-\begin{figure}[ht]
+\begin{figure}[H]
   \centering \includegraphics[width=0.5\linewidth, frame]{ASU-daisy-chain}
   \caption{How to daisy chain and jumper the last ASU of the row.}%
   \label{ASU-daisy-chain}
@@ -426,7 +433,7 @@ Interface and the ASUs.
   \caption{Interface (before buffer
     addition)}\label{fig:Interface_ASU_connection}
 \end{figure}
-\begin{figure}[ht]
+\begin{figure}[H]
   \centering
   \begin{minipage}{0.4\linewidth}
     \centering \includegraphics[width=0.9\linewidth,frame]{ASU-Interface1}
@@ -668,7 +675,7 @@ want to. Anyway \dots
   the case of cable 13.
 \item The final result should look more or less like
   Figure~\ref{fixed-interface}.
-  \begin{figure}[ht]
+  \begin{figure}[H]
     \centering \includegraphics[frame,width=0.9\linewidth]{fixed-interface}
     \caption{Final result. The ground wire coming from wire 50 of
       the flat cable is red (sorry for the ambiguity). The green
@@ -733,10 +740,10 @@ number in the configuration file TO-DO.
 
 \subsection{DIF Firmware upgrade}
 
-TO-DO
+\commblue{TO-DO}
 
 \section{GDCC}
-\begin{figure}[ht]
+\begin{figure}[H]
   \centering \includegraphics[width=0.7\linewidth, frame]{GDCC}
   \caption{Gigabit Data Concentrator Card (GDCC) or Clock and Control Card
     (CCC)}
@@ -852,11 +859,11 @@ To flash the firmware you need a Xilinx programmer like this: TO-DO
 Once the firmware has been flashed it is time to modify the printed circuit. You
 only need to short the R28 and R29 resistors by inserting two $0\Omega$ resistor
 in the appropriate pins.
-\begin{figure}[ht]
+\begin{figure}[H]
   \centering \includegraphics[width=0.5\linewidth,frame]{GDCC-CCC1}
   \caption{The position of the R28 and R29 resistors on the board.}
 \end{figure}
-\begin{figure}[ht]
+\begin{figure}[H]
   \centering \includegraphics[width=0.8\linewidth]{GDCC-CCC2}
 \end{figure}
 You can solder the resistors with a traditional solder iron or with a hot air
@@ -905,7 +912,38 @@ conical tip
 \end{itemize}
 
 \section{Low and High Voltage PS}
-\subsection{Keithley 2400 SourceMeter}
+\subsection{TDK-Lambda ZUP6-33}
+\begin{table}[H]
+  \centering
+  \begin{tabular}{|l|l l l l l|}
+    \hline
+    \textbf{Signal} & \textbf{GND} & \textbf{5.0V}
+    & \textbf{GND} & \textbf{5.0V} & \textbf{GND} \\
+    \hline
+    Molex on IF & 1 & 2 & 3 & 4 & 5 \\
+    Feed-through connector & 1 & 2 & 3 & 4 & 5 \\
+    Terminal on LV PSU & 2 & 1 & 2 & 1 & 2 \\
+    \hline
+  \end{tabular}
+  \caption{Pinout for the TDK-Lambda ZUP6-33 LV PSU}
+\end{table}
+
+\subsection{HV PSU: TDK-Lambda ZUP80-2.5}
+\begin{table}[H]
+  \centering
+  \begin{tabular}{|l|l l l|}
+    \hline
+    & \textbf{LEMO} & \textbf{SHV} & \textbf{DSUB} \\
+    \hline
+    Signal & Central conductor & Pin & 1 \\
+    NC &  &  & 2 \\
+    GND & Outer shield & GND Lug Terminal & 3 \\
+    \hline
+  \end{tabular}
+  \caption{Pinout for the TDK-Lambda ZUP80-2.5 LV PSU}
+\end{table}
+
+\subsection{HV PSU: Keithley 2400 SourceMeter}
 From the Keithley 2400 SourceMeter manual:\textit{The Keithley 2400 SourceMeter
   combines a precise, low-noise, highly stable DC power supply with a low-noise,
   highly repeatable, high-impedance multimeter.}
@@ -924,7 +962,7 @@ are not interested in remotely operating it.
 You can connect the Keithley 2400 to a PC in two ways, each one with pros and
 cons. One way is by using the GPIB port and the other is by using the RS232
 port.
-\begin{figure}[ht]
+\begin{figure}[H]
   \centering \includegraphics[width=0.7\linewidth]{keithley-2400-rear-panel}
   \caption{The Keithley 2400 SourceMeter rear panel.}\label{keithley-2400-rear-panel}
 \end{figure}
@@ -992,7 +1030,7 @@ use a null modem cable. The serial port uses the transmit (TXD), receive (RXD),
 and signal ground (GND) lines of the RS-232
 standard. Figure~\ref{RS232-pinout-instrument} shows the rear panel connector
 for the RS-232 interface and the pinout for the connector.
-\begin{figure}[ht]
+\begin{figure}[H]
   \centering \includegraphics[width=0.4\textwidth]{RS232-pinout-connector}\hfill
   \centering \includegraphics[width=0.4\textwidth]{RS232-pinout-instrument}
   \caption{}\label{RS232-pinout-instrument}
@@ -1001,7 +1039,7 @@ for the RS-232 interface and the pinout for the connector.
 Most desktop motherboards have a serial port (usually called COM) port like
 shown in Figure~\ref{DB9-board-connection} with the relative adapter (usually to
 be bought separately).
-\begin{figure}[ht]
+\begin{figure}[H]
   \centering
   \includegraphics[width=0.55\textwidth,frame]{DB9-board-connection}\hfill
   \includegraphics[width=0.4\textwidth]{RS-232-adapter}
@@ -1026,7 +1064,7 @@ simply because the data transmitted by the PC is received by the instrument and
 vice versa. Same is for the RTS and CTS pins.
 Figure~\ref{RS-232_DE-9_Connector_Pinouts} shows what is the difference between
 the PC and device pinouts. Usually you only have to worry about the PC side.
-\begin{figure}[ht]
+\begin{figure}[H]
   \centering \includegraphics[width=0.9\linewidth]{RS-232_DE-9_Connector_Pinouts}
   \caption{RS-232 DE-9 Connector Pinouts}\label{RS-232_DE-9_Connector_Pinouts}
 \end{figure}
@@ -1040,7 +1078,7 @@ loopback test. A loopback test is a simple test where you short the transmit and
 receive pins of your cable or adapter (Figure~\ref{RS-232_loopback}) and try to
 simultaneously send and receive some random string over the cable. Since those
 pins are shorted the sent string is reflected back and received.
-\begin{figure}[ht]
+\begin{figure}[H]
   \centering \includegraphics[width=0.4\linewidth]{RS-232_loopback}
   \caption{RS-232 loopback test: pins to short. You can use a simple
     jumper to short the pins.}\label{RS-232_loopback}
@@ -1061,132 +1099,87 @@ success you will see the same string appear in the first terminal as well.
 \section{Water Level monitor}
 The USB drive must be formatted with MBR and FAT32.
 \section{The WAGASCI rack}
-TO-DO add picture
-The WAGASCI rack is located on the south side of the WAGASCI detector as shown
-in Pictures TO-DO. It is a single rack where all the acquisition electronics and
-DAQ PCs are located. In this section I will explain all that there is to know
-about it and how to turn it on and off. Be aware that until now the Proton
-module and INGRID module data is not acquired through the WAGASCI rack but
-through the INGRID one located on the SS floor.
+TO-DO add picture The WAGASCI rack is located on the south side of the WAGASCI
+detector as shown in Figure~\ref{fig:WAGASCI-rack-location}. It is a single rack
+where all the acquisition electronics and DAQ PCs are located. In this section I
+will explain all that there is to know about it and how to turn it on and
+off. Be aware that until now the Proton module and INGRID module data is not
+acquired through the WAGASCI rack but through the INGRID one located on the SS
+floor.
+\begin{figure}[H]
+  \centering \includegraphics[width=0.6\linewidth]{WAGASCI-rack-location}
+  \caption{The WAGASCI rack location in orange.}\label{fig:WAGASCI-rack-location}
+\end{figure}
+\begin{figure}[H]
+  \centering \includegraphics[width=\linewidth]{whole-system}
+  \caption{The WAGASCI rack schematics}\label{fig:whole-system}
+\end{figure}
+
 \subsection{NIM crate}
 
-\section{DAQ PC}
+\subsection{DAQ PC}
 
-\section{ANA PC}
+\subsection{ANA PC}
 
-\section{Beam Trigger}
-\begin{figure}[ht]
+\section{Beam Trigger and Spill Number}
+There are two signals coming from the J-PARC neutrino beam line. One is called
+Beam Trigger and signals the coming of the neutrino beam. It is composed of two
+pulses: the ``pre-beam trigger'' that comes 100ms before the beam and the ``beam
+trigger'' that comes 30$\mu$s before the beam. The other signal is called Spill
+Number and, as the name says, it is just the absolute number of each beam
+spill.\commblue{A spill is just one ``shot'' of the beam. To ask when the first
+  spill was produced}. It is a 16-bit digital signal in the ECL logic (see
+Appendix~\ref{sec:emitt-coupl-logic} for further details on the ECL and other
+logic families).
+
+The beam trigger signals comes from the beam line in the form of optical
+signals. These optical signals are converted into electric signals in the beam
+trigger rack, whose location is shown in
+Figure~\ref{fig:beam-trigger-optical-location} and whose schematics is shown in
+Figure~\ref{fig:beam-trigger-optical-schematics}. Figure~\ref{fig:beam-trigger}
+shows an overview of the beam trigger and spill number signals processing while
+Figure~\ref{fig:beam-trigger-chronograph} illustrates the chronograph of all
+these signal in relation to the neutrino beam.
+
+In addition to the beam trigger signals, the LAN cable coming from the J-PARC
+LAN network (called also J-LAN) is strung through the beam trigger rack reaching
+finally the NETGEAR switch on the WAGASCI rack as shown in
+Figure~\ref{fig:beam-trigger-optical-location}.
+\begin{figure}[H]
+  \centering \includegraphics[width=0.6\linewidth]{beam-trigger-optical-location}
+  \caption{Beam trigger rack location on the B2
+    floor.}\label{fig:beam-trigger-optical-location}
+\end{figure}
+\begin{figure}[H]
+  \centering \includegraphics[width=0.6\linewidth]{beam-trigger-optical-schematics}
+  \caption{Beam trigger rack
+    schematics.}\label{fig:beam-trigger-optical-schematics}
+\end{figure}
+\begin{figure}[H]
   \centering \includegraphics[width=\linewidth]{beam-trigger}
   \caption{Beam trigger processing system overview}\label{fig:beam-trigger}
 \end{figure}
-\subsection{Logic Levels}
-Just a review of all the logic families involved in the beam trigger processing.
-This section may be useful to probe the signals with an oscilloscope.
-\subsubsection{Emitter Coupled Logic (ECL)}
-Emitter Coupled Logic (ECL), sometimes referred to as Current Mode Logic, is an
-extremely high-speed digital technology. ECL has a propagation time of 0.5 - 2
-ns, which is much faster than TTL. However, its power dissipation is three to 10
-times higher than that of TTL.
-
-The output logic of ECL, much like that of TTL, varies from a LOW state to a
-HIGH state. However, the voltage levels of these states differ between ECL and
-TTL. The output logic swing of ECL gates varies from a LOW state of -1.75 volts
-to a HIGH state of -0.9 volts with respect to ground. The following table is an
-illustration of when positive logic is used while referring to a logic ``0'' or
-``1''.
-\begin{table}[ht]
-  \centering
-  \begin{tabular}{l l l l}
-    \hline
-    \textbf{Voltage Level} & \textbf{State} & \textbf{Logic} & \textbf{Boolean}
-    \\
-    \hline
-    -1.75 V & LOW & False & 0 \\
-    -0.9 V & HIGH & True & 1 \\
-    \hline
-  \end{tabular}
-  \caption{Fast command packet format}
-\end{table}
-
-Some common terms used when referring to ECL circuits:
-\begin{itemize}
-\item \textbf{VEE}: Negative power, which is typically -5.2 volts.
-\item \textbf{VBB}: Switching threshold, which is typically -1.29 volts.
-\item \textbf{VTT}: Termination voltage, which is typically -2.0 volts.
-\item \textbf{VCC}: Ground, on most ECL circuits.
-\end{itemize}
-
-\subsubsection{Transistor-Transistor Logic (TTL)}
-
-Some common terms used when referring to ECL circuits:
-\begin{itemize}
-\item \textbf{VOH}: Minimum OUTPUT Voltage level a TTL device will provide for a HIGH signal.
-\item \textbf{VIH}: Minimum INPUT Voltage level to be considered a HIGH.
-\item \textbf{VOL}: Maximum OUTPUT Voltage level a device will provide for a LOW signal.
-\item \textbf{VIL}: Maximum INPUT Voltage level to still be considered a LOW.
-\end{itemize}
-
 \begin{figure}[H]
-  \centering
-  \begin{subfigure}[c]{0.15\textwidth}
-    \includegraphics[width=\textwidth,frame]{TTL1}
-  \end{subfigure}
-  \centering
-  \begin{subfigure}[c]{0.7\textwidth}
-    \includegraphics[width=\textwidth,frame]{TTL2}
-  \end{subfigure}
+  \centering \includegraphics[width=\linewidth]{beam-trigger-chronograph}
+  \caption{Beam trigger chronograph}\label{fig:beam-trigger-chronograph}
 \end{figure}
 
-You will notice that the minimum output HIGH voltage (VOH) is 2.7 V. Basically,
-this means that output voltage of the device driving HIGH will always be at
-least 2.7 V. The minimum input HIGH voltage (VIH) is 2 V, or basically any
-voltage that is at least 2 V will be read in as a logic 1 (HIGH) to a TTL
-device. You will also notice that there is cushion of 0.7 V between the output
-of one device and the input of another. This is sometimes referred to as noise
-margin.
-
-Likewise, the maximum output LOW voltage (VOL) is 0.4 V. This means that a
-device trying to send out a logic 0 will always be below 0.4 V. The maximum
-input LOW voltage (VIL) is 0.8 V. So, any input signal that is below 0.8 V will
-still be considered a logic 0 (LOW) when read into the device.
-
-What happens if you have a voltage that is in between 0.8 V and 2 V? Well, your
-guess is as good as mine. Honestly, this range of voltages is undefined and
-results in an invalid state, often referred to as floating. If an output pin on
-your device is ``floating'' in this range, there is no certainty with what the
-signal will result in. It may bounce arbitrarily between HIGH and LOW.
-
-\subsubsection{Nuclear Instrumentation Module (NIM)}
-The NIM standard two types of standards for logical signals, namely:
-\begin{itemize}
-\item Fast-negative logic with rise times of order of 1 ns. The range is set
-  by the current range corresponding to 0V and -8V.
-  \begin{table}[H]
-    \centering
-    \begin{tabular}{l l l}
-      \hline
-      & \textbf{Output must deliver} & \textbf{Input must accept} \\
-      \hline
-      Logic 1 & -14 mA to -18 mA & -12 mA to -36 mA \\
-      Logic 0 & -1 mA to +1 mA & -4 mA to +20 mA \\
-      \hline
-    \end{tabular}
-    \caption{Fast-negative NIM logic}
-  \end{table}
-\item Slow-positive signals:
-  \begin{table}[H]
-    \centering
-    \begin{tabular}{l l l}
-      \hline
-      & \textbf{Output must deliver} & \textbf{Input must accept} \\
-      \hline
-      Logic 1 & +4 to +12 V & +3 to +12 V \\
-      Logic 0 & +1 to -2V & +1.5 to -2 V \\
-      \hline
-    \end{tabular}
-    \caption{Fast-negative NIM logic}
-  \end{table}
-\end{itemize}
+\subsection{Spill Number}
+\begin{figure}[H]
+  \centering \includegraphics[width=\linewidth]{cables-spill-number}
+  \caption{Spill number processing boards}\label{fig:cables-spill-number}
+\end{figure}
+\begin{table}[H]
+  \centering
+  \begin{tabular}{|l l l l l l l l l l l l l|}
+    \hline
+    \textbf{Pmod} & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 \\
+    \textbf{Hirose 10-pin} & 1 & 3 & 5 & 7 & 9 & NC & 2 & 4 & 6 & 8 & 10 & NC\\
+    \textbf{LEMO} & 1 & 2 & 3 & 4 & GND & NC & 7 & 8 & 9 & 10 & GND & NC \\
+    \hline
+  \end{tabular}
+  \caption{Pinout of the Pmod connector on the ZedBoard}
+\end{table}
 
 % -------------------------------------------------------------------------------- %
 
@@ -1381,7 +1374,7 @@ file should be enough to get things going in almost every real-world scenario.
 
 For the developers and more experienced users let's start by taking a look at
 the graph~\ref{fig:acq-server}:
-\begin{figure}[ht]
+\begin{figure}[H]
   \centering \includegraphics[frame,width=0.8\linewidth]{acq_server.doc.png}
   \caption{Pyrame State Machine}\label{fig:acq-server}
 \end{figure}
@@ -2134,6 +2127,118 @@ wget https://www.dropbox.com/s/n7n1wiivn1noets/patchy4.tar.gz
 \end{enumerate}
 
 \chapter{Appendix}
+
+\section{Logic Levels}
+Just a review of all the logic families involved in the beam trigger processing.
+This section may be useful to probe the signals with an oscilloscope.
+\subsection{Emitter Coupled Logic (ECL)}\label{sec:emitt-coupl-logic}
+Emitter Coupled Logic (ECL), sometimes referred to as Current Mode Logic, is an
+extremely high-speed digital technology. ECL has a propagation time of 0.5 - 2
+ns, which is much faster than TTL. However, its power dissipation is three to 10
+times higher than that of TTL.
+
+The output logic of ECL, much like that of TTL, varies from a LOW state to a
+HIGH state. However, the voltage levels of these states differ between ECL and
+TTL. The output logic swing of ECL gates varies from a LOW state of -1.75 volts
+to a HIGH state of -0.9 volts with respect to ground. The following table is an
+illustration of when positive logic is used while referring to a logic ``0'' or
+``1''.
+\begin{table}[H]
+  \centering
+  \begin{tabular}{l l l l}
+    \hline
+    \textbf{Voltage Level} & \textbf{State} & \textbf{Logic} & \textbf{Boolean}
+    \\
+    \hline
+    -1.75 V & LOW & False & 0 \\
+    -0.9 V & HIGH & True & 1 \\
+    \hline
+  \end{tabular}
+  \caption{Fast command packet format}
+\end{table}
+
+Some common terms used when referring to ECL circuits:
+\begin{itemize}
+\item \textbf{VEE}: Negative power, which is typically -5.2 volts.
+\item \textbf{VBB}: Switching threshold, which is typically -1.29 volts.
+\item \textbf{VTT}: Termination voltage, which is typically -2.0 volts.
+\item \textbf{VCC}: Ground, on most ECL circuits.
+\end{itemize}
+
+\subsection{Transistor-Transistor Logic (TTL)}
+
+Some common terms used when referring to ECL circuits:
+\begin{itemize}
+\item \textbf{VOH}: Minimum OUTPUT Voltage level a TTL device will provide for a
+  HIGH signal.
+\item \textbf{VIH}: Minimum INPUT Voltage level to be considered a HIGH.
+\item \textbf{VOL}: Maximum OUTPUT Voltage level a device will provide for a LOW
+  signal.
+\item \textbf{VIL}: Maximum INPUT Voltage level to still be considered a LOW.
+\end{itemize}
+
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}[c]{0.15\textwidth}
+    \includegraphics[width=\textwidth,frame]{TTL1}
+  \end{subfigure}
+  \centering
+  \begin{subfigure}[c]{0.7\textwidth}
+    \includegraphics[width=\textwidth,frame]{TTL2}
+  \end{subfigure}
+\end{figure}
+
+You will notice that the minimum output HIGH voltage (VOH) is 2.7 V. Basically,
+this means that output voltage of the device driving HIGH will always be at
+least 2.7 V. The minimum input HIGH voltage (VIH) is 2 V, or basically any
+voltage that is at least 2 V will be read in as a logic 1 (HIGH) to a TTL
+device. You will also notice that there is cushion of 0.7 V between the output
+of one device and the input of another. This is sometimes referred to as noise
+margin.
+
+Likewise, the maximum output LOW voltage (VOL) is 0.4 V. This means that a
+device trying to send out a logic 0 will always be below 0.4 V. The maximum
+input LOW voltage (VIL) is 0.8 V. So, any input signal that is below 0.8 V will
+still be considered a logic 0 (LOW) when read into the device.
+
+What happens if you have a voltage that is in between 0.8 V and 2 V? Well, your
+guess is as good as mine. Honestly, this range of voltages is undefined and
+results in an invalid state, often referred to as floating. If an output pin on
+your device is ``floating'' in this range, there is no certainty with what the
+signal will result in. It may bounce arbitrarily between HIGH and LOW.
+
+\subsection{Nuclear Instrumentation Module (NIM)}
+The NIM standard two types of standards for logical signals, namely:
+\begin{itemize}
+\item Fast-negative logic with rise times of order of 1 ns. The range is set
+  by the current range corresponding to 0V and -8V.
+  \begin{table}[H]
+    \centering
+    \begin{tabular}{l l l}
+      \hline
+      & \textbf{Output must deliver} & \textbf{Input must accept} \\
+      \hline
+      Logic 1 & -14 mA to -18 mA & -12 mA to -36 mA \\
+      Logic 0 & -1 mA to +1 mA & -4 mA to +20 mA \\
+      \hline
+    \end{tabular}
+    \caption{Fast-negative NIM logic}
+  \end{table}
+\item Slow-positive signals:
+  \begin{table}[H]
+    \centering
+    \begin{tabular}{l l l}
+      \hline
+      & \textbf{Output must deliver} & \textbf{Input must accept} \\
+      \hline
+      Logic 1 & +4 to +12 V & +3 to +12 V \\
+      Logic 0 & +1 to -2V & +1.5 to -2 V \\
+      \hline
+    \end{tabular}
+    \caption{Fast-negative NIM logic}
+  \end{table}
+\end{itemize}
+
 \section{GDCC cheat-sheet}\label{sec:gdcc-cheat-sheet}
 This cheat-sheet is intended for debug only. Normal users (myself included)
 should not need to care about this. I have included it in the appendix just in
@@ -2147,7 +2252,7 @@ via the GDCC \textrightarrow COMPUTER link.
 
 When done via this method the packet used is smaller than the normal GDCC packet
 format, and is processed separately.
-\begin{table}[ht]
+\begin{table}[H]
   \centering \resizebox{\textwidth}{!}{ \bgroup
     \def\arraystretch{1.5}% 1 is the default, change whatever you need
     \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
@@ -2204,7 +2309,7 @@ format, and is processed separately.
 
 
 \subsection{GDCC packet format}
-\begin{table}[ht]
+\begin{table}[H]
   \centering \resizebox{\textwidth}{!}{ \bgroup
     \def\arraystretch{1.5}% 1 is the default, change whatever you need
     \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
@@ -2269,7 +2374,7 @@ format, and is processed separately.
 
 \subsection{GDCC Register Packet Format }
 Access to GDCC registers is done via the following sub packet type.
-\begin{table}[ht]
+\begin{table}[H]
   \centering \bgroup
   \def\arraystretch{1.5}% 1 is the default, change whatever you need
   \begin{tabular}{|c|c|}
