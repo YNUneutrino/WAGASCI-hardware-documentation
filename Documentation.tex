@@ -1185,16 +1185,16 @@ floor.
 
 \section{Beam Trigger and Spill Number}\label{sec:beam-trigger-spill}
 There are two signals coming from the J-PARC neutrino beam line. One is called
-Beam Trigger and signals the coming of the neutrino beam. It is composed of two
+\textbf{Beam Trigger} and is composed of two
 pulses: the ``pre-beam trigger'' that comes 100ms before the beam and the ``beam
-trigger'' that comes 30$\mu$s before the beam. The other signal is called Spill
-Number and, as the name says, it is just the absolute number of each beam
+trigger'' that comes 30$\mu$s before the beam. The other signal is called \textbf{Spill
+Number} and, as the name says, it is just the absolute number of each beam
 spill.\commblue{A spill is just one ``shot'' of the beam. To ask when the first
   spill was produced}. It is a 16-bit digital signal in the ECL logic (see
 Appendix~\ref{sec:emitt-coupl-logic} for further details on the ECL and other
 logic families).
 
-The beam trigger signals comes from the beam line in the form of optical
+These signals are sent from the beam line in the form of optical
 signals. These optical signals are converted into electric signals in the beam
 trigger rack, whose location is shown in
 Figure~\ref{fig:beam-trigger-optical-location} and whose schematics is shown in
@@ -1686,15 +1686,9 @@ TO-DO
 TO-DO
 
 
-\section{Anpan}
-\begin{itemize}
-\item WAGASCI\_PORT=12000
-\item ACQPC\_PORT=12001
-\item GDCC\_PORT=12003
-\item CCC\_PORT=12004
-\item DIF\_PORT=12005
-\item ASU\_PORT=12006
-\end{itemize}
+\section{SPIROC2D raw data}
+
+
 
 \chapter{Additional Software}
 \section{ROOT 6}
@@ -2224,6 +2218,183 @@ wget https://www.dropbox.com/s/n7n1wiivn1noets/patchy4.tar.gz
 \end{lstlisting}
 \end{enumerate}
 
+\chapter{Calibration}
+
+\section{Dark Noise}
+
+In this section I will describe how the WAGASCI software calculates the MPPC
+dark noise during calibration. Measuring the dark noise rate under different
+configurations is useful in many ways. For example the S-curve (TO-DO) is drawn
+by measuring the hits due to the dark noise for different values of the chip
+threshold. Measuring the dark rate during a Physics run is one of the ways to
+online monitor the detector and the dark rate stability can be used to assess
+the detector stability as a whole. For these and other reasons, a measure of the
+dark noise is important not only to characterize the MPPC itself.
+
+Here I will ignore the particular conditions under which the dark noise is
+measured, i.e.\ the particular value of the threshold. Anyway, for the sake of
+our argument, let's assume that the threshold is set to the lowest (in absolute
+terms) value as possible, so that each pulse due to dark current (thermal
+electron/pair ionization) is collected. But the same treatment applies to other
+values of the threshold as well. If the threshold is set to a 0.5 p.e.\
+equivalent we will refer to the dark noise in this configuration as 1 p.e.\
+dark noise, and so on for 2 p.e., etc \dots.
+
+Moreover I will assume that no other signal but the dark noise is present (no
+external light sources) so that every pulse is only due to the dark
+noise. Lastly I will assume that the afterpulse and cross-talk are
+negligible. Because of the SPIROC long dead time even if there were cross-talk
+and afterpulses, they would be never counted as different pulses anyway (but
+they may still affect the ADC count).
+
+\subsection{What is dark noise?}
+
+TO-DO
+
+\subsection{Dark noise and the WAGASCI experiment}
+
+As shown in table (TO-DO) the nominal dark rate of the MPPC is around 60
+kHz. This means that at a threshold of 0.5 p.e.\ we expect a pulse every
+$20 \mu s$. Given a slow clock semi-period of 580 ns (BCID period), for a single
+MPPC, we expect a dark count about every 30 BCID counts. Assuming a Poisson
+distribution for the dark noise hits and considering that one and only one spill
+bunch falls inside one BCID count, even if we took Physics data with a 0.5 p.e.\
+threshold, only around 3\% of the channels would trigger due to dark noise
+(every bunch). This is because the WAGASCI MPPCs have relatively low dark
+noise. Moreover, according to a spreadsheet that I found in the
+\href{https://www-he.scphys.kyoto-u.ac.jp/research/Neutrino/WAGASCI/wiki/dokuwiki/doku.php?id=tamura:mppc_mass_test}
+{WAGASCI online wiki}, at 1.5 p.e.\ threshold the 2 p.e.\ dark noise rate
+decreases to about 2kHz.
+
+Turning now to the actual dark rate measurement, for an acquisition period of
+260 ms with an active time window of 5 ms (the default CCC internal spill
+parameters), it would take about 5 minutes to reach a precision of 1\% (TO-DO)
+in the measurement of the dark noise rate, almost irrespective of the threshold
+value\footnote{to be precise it would take about 4 minutes for 1 p.e.\ dark
+  noise and 5.5 minutes for 2 p.e.\ dark noise.  In this simple calculation we
+  have taken into account that the memory depth of the SPIROC2D chip is only 16
+  columns and we want to use only half of it to avoid finite memory
+  artifacts.}. Keep in mind that, for higher threshold values, the active window
+might need to be increased (at 2kHz noise rate a window of at least 8ms is
+needed).
+
+To be on the safe size, I would say that a 10 minutes acquisition time
+with 260ms acquisition period and 10 ms active time windows is more than enough
+for a good estimate of the dark noise rate for 1 and 2 p.e..
+
+\subsection{How to measure dark noise}
+
+To measure the dark count we will use the slow clock (the BCID) time only. In
+future it might be interesting to exploit the fine time (TDC) too. Most probably
+for our purposes the BCID might be enough (but a precise assessment of the
+validity of this guess is desirable).
+
+Let's assume that we have taken some raw data like described in the previous
+section. Now we want to analyze it to extract our beloved dark noise rate. For
+further info about the programs used in the following please refer to the
+WAGASCI Analysis software documentation. If you cannot find what you are looking
+for in the Analysis documentation consider taking a look at the relevant header
+file where a lot of useful information is enclosed in the comments.
+
+First we need to decode the data with the program called
+\cleanstyle{Decoder}. After decoding we have a \cleanstyle{\_tree.root} file
+containing a \cleanstyle{TTree} with many branches. One of those branches is
+called \cleanstyle{bcid} and contains the array
+\cleanstyle{bcid[n\_chips][MEMDEPTH]}, where \cleanstyle{n\_chips} is equal to the
+number of SPIROC2D chips used and \cleanstyle{MEMDEPTH = 16} is the fixed number
+of columns. This array contains the BCID number for each chip and column and the
+branch is filled each event (each spill). So you can image that the branch
+contain a copy of that array for each spill.
+
+Then by using the program called \cleanstyle{wgMakeHist} we read the
+\cleanstyle{\_tree.root} file and create another root \cleanstyle{\_hist.root}
+file containing many histograms useful for analysis and calibration. Among the
+others, an histogram called \cleanstyle{bcid\_hit} is filled with an array
+\cleanstyle{bcid\_hit[n\_chips][n\_channels]}, where \cleanstyle{n\_channels} is
+equal to the number of active channels for each chip. This histogram has exactly
+\cleanstyle{NBINS} bins and each bin has width of 1: each bin represents a BCID
+number from 0 to \cleanstyle{NBINS}\footnote{Please note that in this way, any
+  BCID greater than NBINS is ignored. We might want to fix this in future.}. The
+histogram is then filled in the following way: every event (spill), for each chip,
+channel and column, if we have a hit in that column, we increment the relative
+BCID bin by one.
+\begin{lstlisting}
+...
+// For each event (spill)
+for(size_t i = 0; i < n_chips; i++) {
+  int ichip = rd.chipid[i];
+  for(size_t icol = 0; icol < MEMDEPTH; icol++) {
+    for(size_t ichan = 0; ichan < n_channels; ichan++) {
+      if ( rd.hit[i][ichan][icol] == HIT_BIT ) {
+        h_bcid_hit[ichip][ichan]->Fill(rd.bcid[i][COL]);
+        ...
+      }
+    }
+  }
+}
+...
+\end{lstlisting}
+\begin{figure}[H]
+  \centering \includegraphics[width=0.6\linewidth]{BCID_hist}
+  \caption{BCID histogram as created by the \cleanstyle{wgMakeHist}
+    program. On the x axis the BCID number, on the y axis the counts. This
+    picture only shows a small section of the histogram.}%
+  \label{fig:BCID_hist}
+\end{figure}
+In figure~\ref{fig:BCID_hist} we can see a portion of the created histogram. If
+you want to think about it in the domain of time, it is like we squashed all the
+hits in all the spills for that particular channel into the same time frame
+given by the greatest BCID value.
+
+Then we can call the \cleanstyle{NoiseRate} method of the \cleanstyle{wgFit}
+class to calculate the dark noise rate. In the following we will define the
+following variables:
+\begin{itemize}
+\item $N$: true dark noise rate (kHz)
+\item $n$: observed dark noise rate (kHz)
+\item $B$: BCID number (adimensional)
+\item $k$: number of spills (adimensional)
+\item $\Sigma$: total number of counts in the active window (adimensional)
+  \item $T$: total duration of the active window (seconds)
+\item $\tau = 580 ns$: dead time (slow clock semi-period) (nanosecond)
+\end{itemize}
+
+When calculating the dark noise rate, we must take into account the fact that
+the SPIROC chip can record only one hit per channel for each BCID count. I mean,
+if there is a hit in a channel, any other hit for that channel is ignored until
+the BCID number changes (we go to the next column). For further information
+about how the SPIROC2D chip records time refer to the SPIROC
+datasheet\cite{SPIROC2Ddatasheet}. So the dead time is equal to $\tau$.
+
+In the book\cite{Wright:2017} you can find a very thorough treatment
+about dead time in counting measures. All the following
+formulas are taken from there. Our setup falls into the non-paralysable category
+(Type II in the text). The conclusion is that the observed rate $n$ is always
+smaller than the real rate $N$ by
+\begin{equation}
+N = \frac{n}{1-n\tau} = \frac{\Sigma}{T-\Sigma\tau} = \frac{\Sigma}{(Bk-\Sigma)\tau} 
+\end{equation}
+For a total acquisition time $T$, the variance on the real number of counts $NT$ is
+\begin{equation}
+\sigma^2_{NT} = \frac{NT}{{\left (1 + N \tau \right )}^3}
+\end{equation}
+If we assume that the variance on the total time $T$ is negligible with respect
+to the variance $\sigma^2_{N}$ we get that
+\begin{equation}
+  \sigma^2_{N} = \sigma^2_{NT}/T^2 \Rightarrow \sigma_{N} = \frac{\sqrt{\Sigma}}{B}\frac{k - \Sigma/B}{k^2\tau}
+\end{equation}
+
+Referring to figure~\ref{fig:BCID_hist}, the $\Sigma$ is the integral between 0
+and an arbitrary $B$ that is well between the tail of the histogram. The smaller
+$B$ is the more data we are ``wasting'', but if $B$ is close to the tail of the
+histogram the finite memory artifacts kicks in. By finite memory artifacts I
+mean the fact that there are only 16 columns in the SPIROC chip, so that only 16
+hits at most can be recorded every acquisition window (every spill). If the
+columns fill up, the acquisition phase is terminated and the readout phase
+inevitably begins.
+
+TO-BE-CONTINUED
+
 \chapter{Appendix}
 
 \section{Logic Levels}
@@ -2574,6 +2745,29 @@ upper 4 bits define the Block. The lower 12 define the Register.
   \end{tabular}
   \egroup
 \end{table}
+
+% \subsection{GDCC LEDs}
+%  - LEDs
+%     -- An LED flushing on “D1” -> means clock signal correctly comes from CCC
+%     -- In LEDs at bottom of front panel of GDCC, “B/G”:ON->correct connection b/w GDCC and PC,
+%              “L1” must be on if CH1 is connected to DIF, but off => failed connection to DIF.
+%     -- An LED on DIF flushes once as power on, then OFF. -> correct behvaior, that means firmware loaded.
+%     -- A couple of LEDs next to Ethernet on GDCC flush several times as power on, then stable at ON.
+%     *DIFとGDCCのconnection成功->Frontpanel のLED１つ（portに対応するもの）が緑に光る
+%      LED関連
+% 　  1. GDCC front-panel
+%             - B/G（緑） = GDCCとPCの接続
+% 　　　 - L# (緑) = 対応するPort CH の接続（GDCC/DIF）OK
+%            - B# (橙・点滅) = Acq 時、DIF-GDCC間でデータ通信あり
+%       2. LEDs next to Ethernet connection on GDCC
+%             - 電源ON -> 2つON(1000, DUAL...) (赤)
+% 　　　 -  DAQ -> 3つON (1000, DUAL… , TX) (赤)
+%       3. LEDS next to red switches on GDCC
+%            - 電源ON -> 1つ ON, 1つ点滅（CCCからCLKを受信） (橙)
+%            - DAQ -> さらにもう1つON (橙)
+%       4. on DIF
+%            - 電源ON -> 1度点滅 （緑）
+
 \printbibliography
 \end{document}
 
