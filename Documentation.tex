@@ -2253,14 +2253,14 @@ TO-DO
 
 \subsection{Dark noise and the WAGASCI experiment}
 
-As shown in table (TO-DO) the nominal dark rate of the MPPC is around 60
-kHz. This means that at a threshold of 0.5 p.e.\ we expect a pulse every
-$20 \mu s$. Given a slow clock semi-period of 580 ns (BCID period), for a single
-MPPC, we expect a dark count about every 30 BCID counts. Assuming a Poisson
-distribution for the dark noise hits and considering that one and only one spill
-bunch falls inside one BCID count, even if we took Physics data with a 0.5 p.e.\
-threshold, only around 3\% of the channels would trigger due to dark noise
-(every bunch). This is because the WAGASCI MPPCs have relatively low dark
+As shown in table (TO-DO) the nominal dark rate of the WAGASCI and SideMRD MPPCs
+is around 60 kHz. This means that at a threshold of 0.5 p.e.\ we expect a pulse
+every $20 \mu s$. Given a slow clock semi-period of 580 ns (BCID period), for a
+single MPPC, we expect a dark count about every 30 BCID counts. Assuming a
+Poisson distribution for the dark noise hits and considering that one and only
+one spill bunch falls inside one BCID count, even if we took Physics data with a
+0.5 p.e.\ threshold, only around 3\% of the channels would trigger due to dark
+noise (every bunch). This is because the WAGASCI MPPCs have relatively low dark
 noise. Moreover, according to a spreadsheet that I found in the
 \href{https://www-he.scphys.kyoto-u.ac.jp/research/Neutrino/WAGASCI/wiki/dokuwiki/doku.php?id=tamura:mppc_mass_test}
 {WAGASCI online wiki}, at 1.5 p.e.\ threshold the 2 p.e.\ dark noise rate
@@ -2368,9 +2368,16 @@ datasheet\cite{SPIROC2Ddatasheet}. So the dead time is equal to $\tau$.
 
 In the book\cite{Wright:2017} you can find a very thorough treatment
 about dead time in counting measures. All the following
-formulas are taken from there. Our setup falls into the non-paralysable category
-(Type II in the text). The conclusion is that the observed rate $n$ is always
-smaller than the real rate $N$ by
+formulas are taken from there. Just as a quick reference, here is a figure taken
+from that textbook that shows how the count rate linearity is lost for counters
+with dead time. Our setup falls into the non-paralysable category
+(Type II in the text).
+\begin{figure}[H]
+  \centering \includegraphics[width=0.6\linewidth]{DeadTime}
+\end{figure}
+
+The conclusion is that the observed rate $n$ is always smaller than the real
+rate $N$ by
 \begin{equation}
 N = \frac{n}{1-n\tau} = \frac{\Sigma}{T-\Sigma\tau} = \frac{\Sigma}{(Bk-\Sigma)\tau} 
 \end{equation}
